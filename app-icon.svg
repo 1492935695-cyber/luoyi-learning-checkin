@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="珞伊学习打卡图标">
+  <rect width="512" height="512" rx="92" fill="#155b3f"/>
+  <circle cx="256" cy="256" r="166" fill="#ffffff"/>
+  <ellipse cx="183" cy="220" rx="72" ry="49" fill="#d9edf4" stroke="#237a57" stroke-width="18" transform="rotate(18 183 220)"/>
+  <ellipse cx="329" cy="220" rx="72" ry="49" fill="#d9edf4" stroke="#237a57" stroke-width="18" transform="rotate(-18 329 220)"/>
+  <rect x="239" y="154" width="34" height="210" rx="17" fill="#155b3f"/>
+  <path d="M187 284l48 48 92-111" fill="none" stroke="#d65e4a" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
