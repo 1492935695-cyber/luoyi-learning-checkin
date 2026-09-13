@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#10243b">
+  <title>珞伊空间搭桥</title>
+  <link rel="stylesheet" href="space-puzzle.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="back" href="index.html" aria-label="返回首页">‹</a>
+      <div><p class="eyebrow">专注力 · 空间推理</p><h1>珞伊空间搭桥</h1></div>
+      <button class="icon-btn" id="helpBtn" title="查看提示">?</button>
+    </header>
+
+    <section class="status" aria-live="polite">
+      <div><span class="label">关卡</span><strong id="levelText">1 / 12</strong></div>
+      <div><span class="label">步数</span><strong id="movesText">0</strong></div>
+      <div><span class="label">用时</span><strong id="timeText">00:00</strong></div>
+    </section>
+
+    <section class="scene-wrap">
+      <div class="scene" id="scene" aria-label="空间方块棋盘"></div>
+      <div class="legend"><span class="target-dot"></span>目标高度 <span class="current-block"></span>当前高度</div>
+    </section>
+
+    <section class="controls">
+      <button class="secondary" id="resetBtn">↻ 重来</button>
+      <button class="secondary" id="undoBtn" disabled>↶ 撤销</button>
+      <button class="primary" id="nextBtn" hidden>下一关 →</button>
+    </section>
+    <p class="tip" id="tipText">点击方块，让每一列的高度和目标点一致。</p>
+    <nav class="levels" id="levels" aria-label="选择关卡"></nav>
+  </main>
+
+  <dialog id="helpDialog"><button class="dialog-close" id="closeHelp">×</button><h2>怎么玩</h2><p>每个彩色小方块代表一层高度。点击方块会让它升高一层，超过最高层后会回到 0。请观察每列上方的目标点，把所有方块调成目标高度。</p><p>珞伊可以先说出“这一列还差几层”，再动手。需要时按“提示”，每关只提供一步思路。</p></dialog>
+  <script src="space-puzzle.js"></script>
+</body>
+</html>
