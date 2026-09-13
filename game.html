@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#143d35">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="规律花园">
+  <meta name="description" content="珞伊的找规律益智小游戏">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <link rel="icon" href="app-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="game.css">
+  <title>规律花园 · 珞伊</title>
+</head>
+<body>
+  <header class="game-topbar">
+    <a class="back-link" href="index.html" aria-label="返回珞伊学习打卡">
+      <span aria-hidden="true">←</span>
+      <span>返回打卡</span>
+    </a>
+    <div class="game-mark" aria-hidden="true">
+      <span class="game-mark__stem"></span>
+      <span class="game-mark__wing game-mark__wing--left"></span>
+      <span class="game-mark__wing game-mark__wing--right"></span>
+    </div>
+    <span class="game-label">5分钟小挑战</span>
+  </header>
+
+  <main class="game-shell">
+    <section class="game-intro" aria-labelledby="game-title">
+      <div class="intro-copy">
+        <p class="eyebrow">观察 · 记住 · 说出理由</p>
+        <h1 id="game-title" tabindex="-1">规律花园</h1>
+        <p class="intro-text">花园里少了一块图形。看看前面的排列，找出最合适的一块。</p>
+      </div>
+      <svg class="garden-art" viewBox="0 0 180 140" role="img" aria-label="一只停在叶片旁的蜻蜓">
+        <path d="M18 119C51 93 78 91 161 113" fill="none" stroke="#b7d6c3" stroke-width="8" stroke-linecap="round"/>
+        <path d="M36 111C32 81 46 61 70 57c-3 30-14 50-34 54Z" fill="#72b58f"/>
+        <path d="M42 108c13-14 22-30 27-48" fill="none" stroke="#2e7d5a" stroke-width="3" stroke-linecap="round"/>
+        <path d="M113 48c19-22 44-18 42-1-3 17-27 22-42 15Z" fill="#eab65a" stroke="#b47c22" stroke-width="2"/>
+        <path d="M113 49c-22-19-42-10-36 6 7 15 27 15 41 9Z" fill="#8ac8dc" stroke="#3f8798" stroke-width="2"/>
+        <path d="M115 55c-9-28 8-44 20-32 11 11 2 31-15 36Z" fill="#9bd5e4" stroke="#3f8798" stroke-width="2"/>
+        <path d="M115 56c8 28-7 42-19 30-11-11-3-30 14-36Z" fill="#a9dbe8" stroke="#3f8798" stroke-width="2"/>
+        <path d="M111 51c-8 18-7 28 1 38" fill="none" stroke="#1e5c55" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="111" cy="46" r="5" fill="#1e5c55"/>
+        <circle cx="109" cy="44" r="1.5" fill="#fff"/>
+      </svg>
+    </section>
+
+    <section class="game-panel" aria-labelledby="round-title">
+      <div class="round-head">
+        <div>
+          <p id="round-kicker" class="eyebrow">第1关</p>
+          <h2 id="round-title">找到缺少的图形</h2>
+        </div>
+        <div class="round-progress" aria-live="polite">
+          <span id="round-number">1</span><span class="progress-slash">/</span><span>6</span>
+        </div>
+      </div>
+
+      <div class="round-track" aria-hidden="true"><span id="round-fill"></span></div>
+
+      <div id="sequence" class="sequence" role="group" aria-label="规律图形序列"></div>
+
+      <p class="question-line">下面哪一块可以放进问号里？</p>
+      <div id="options" class="options" role="group" aria-label="答案选项"></div>
+
+      <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+      <button id="next-round" class="primary-button" type="button" hidden>下一关</button>
+    </section>
+
+    <section class="parent-tip" aria-label="亲子引导">
+      <span class="tip-dot" aria-hidden="true"></span>
+      <p><strong>妈妈可以问一句：</strong>“你是看颜色、形状，还是数量发现的？”</p>
+    </section>
+  </main>
+
+  <div id="finish-panel" class="finish-panel" hidden>
+    <div class="finish-card" role="dialog" aria-modal="true" aria-labelledby="finish-title">
+      <svg class="finish-spark" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M24 3 29 19l16 5-16 5-5 16-5-16-16-5 16-5 5-16Z" fill="currentColor"/>
+      </svg>
+      <p class="eyebrow">今天的小挑战完成了</p>
+      <h2 id="finish-title">珞伊找到了 6 个规律</h2>
+      <p>和妈妈说一说：哪一关最容易？哪一关需要再看一遍？</p>
+      <button id="restart-game" class="primary-button" type="button">再玩一次</button>
+      <a class="finish-back" href="index.html">回到学习打卡</a>
+    </div>
+  </div>
+
+  <script src="game.js" defer></script>
+</body>
+</html>
