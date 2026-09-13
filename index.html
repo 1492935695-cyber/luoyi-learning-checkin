@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f8f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="珞伊打卡">
+  <meta name="description" content="珞伊的一年级轻量学习打卡">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <link rel="icon" href="app-icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <title>珞伊学习打卡</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="brand-mark" aria-hidden="true">
+        <span class="brand-mark__wing brand-mark__wing--left"></span>
+        <span class="brand-mark__body"></span>
+        <span class="brand-mark__wing brand-mark__wing--right"></span>
+      </div>
+      <div>
+        <p class="eyebrow">一年级轻量计划</p>
+        <h1>珞伊学习打卡</h1>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="game-entry" aria-labelledby="game-entry-title">
+      <div>
+        <p class="eyebrow">今天想动动脑吗？</p>
+        <h2 id="game-entry-title">规律花园</h2>
+        <p>6 个小关卡，找规律、说理由，玩完就停。</p>
+      </div>
+      <a class="game-entry__link" href="game.html">开始游戏 <span aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="today-band" aria-labelledby="today-title">
+      <div class="section-inner">
+        <div class="today-heading">
+          <div>
+            <p id="today-date" class="date-line"></p>
+            <h2 id="today-title">今天只做3件事</h2>
+          </div>
+          <div class="progress-count" aria-live="polite">
+            <strong id="done-count">0</strong><span>/3</span>
+          </div>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <span id="progress-fill"></span>
+        </div>
+
+        <div id="task-list" class="task-list"></div>
+
+        <p id="today-message" class="today-message" aria-live="polite">
+          按自己的节奏来，完成一件就很踏实。
+        </p>
+      </div>
+    </section>
+
+    <section class="week-band" aria-labelledby="week-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <div>
+            <p id="week-range" class="eyebrow"></p>
+            <h2 id="week-title">本周进度</h2>
+          </div>
+          <p id="week-total" class="week-total">已完成 0 项</p>
+        </div>
+        <div id="week-grid" class="week-grid" aria-label="本周每日完成情况"></div>
+        <p class="quiet-note">没有连续签到要求，漏一天也没关系。</p>
+      </div>
+    </section>
+
+    <section class="reflection-band" aria-labelledby="reflection-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">周末5分钟</p>
+            <h2 id="reflection-title">家庭小记录</h2>
+          </div>
+          <span id="save-state" class="save-state" aria-live="polite"></span>
+        </div>
+
+        <label class="field-label" for="weekly-good">这周最值得肯定的一件事</label>
+        <textarea id="weekly-good" rows="3" maxlength="120" placeholder="例如：珞伊上课会主动举手了"></textarea>
+
+        <label class="field-label" for="weekly-adjust">下周只调整一个动作</label>
+        <textarea id="weekly-adjust" rows="3" maxlength="120" placeholder="例如：回答问题时声音再清楚一点"></textarea>
+
+        <button id="save-week" class="primary-button" type="button">保存本周记录</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>记录只保存在当前手机浏览器中，不会上传。</p>
+  </footer>
+
+  <script src="app.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (document.querySelector('a[href="space-puzzle.html"]')) return;
+    var main = document.querySelector('main') || document.body;
+    var link = document.createElement('a');
+    link.href = 'space-puzzle.html';
+    link.className = 'tool-card';
+    link.innerHTML = '<span class="tool-icon">◇</span><span><strong>珞伊空间搭桥</strong><small>3D空间推理 · 12关</small></span><span class="tool-arrow">›</span>';
+    main.appendChild(link);
+  });
+</script>
+</body>
+</html>
