@@ -1,0 +1,20 @@
+{
+  "name": "珞伊学习打卡",
+  "short_name": "珞伊打卡",
+  "id": "./",
+  "description": "珞伊的一年级轻量学习打卡",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f8f6",
+  "theme_color": "#155b3f",
+  "icons": [
+    {
+      "src": "app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
