@@ -1,4 +1,4 @@
-importScripts('island-logic.js?v=20260914b');
+importScripts('island-logic.js?v=20260914c');
 self.onmessage = function(event) {
   const { level, state, request } = event.data;
   const l = IslandLogic.levels[level];

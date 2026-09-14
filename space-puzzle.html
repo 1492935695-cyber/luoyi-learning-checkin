@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#e5efe8">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>米米的冒险岛 · 珞伊的3D益智游戏</title>
+  <title>珞伊的米米冒险岛 · 3D益智游戏</title>
   <link rel="icon" href="app-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="space-puzzle.css?v=20260914b">
+  <link rel="stylesheet" href="space-puzzle.css?v=20260914c">
 </head>
 <body>
   <svg class="svg-library" xmlns="http://www.w3.org/2000/svg"><defs>
@@ -27,22 +27,22 @@
     <div id="world" role="img" aria-label="可转动的3D冒险岛，小兔米米在小路上等待出发"></div>
     <header class="topbar">
       <a class="home-link" href="index.html" aria-label="返回珞伊学习打卡"><svg><use href="#i-back"/></svg><span>学习小屋</span></a>
-      <div class="brand"><svg class="bunny-mark"><use href="#i-rabbit"/></svg><span>米米的冒险岛<small>A LITTLE WORLD OF WONDER</small></span></div>
+      <div class="brand"><svg class="bunny-mark"><use href="#i-rabbit"/></svg><span>珞伊的米米冒险岛<small>LUOYI'S LITTLE WORLD OF WONDER</small></span></div>
       <button id="soundBtn" class="round-button" aria-label="开启音效" aria-pressed="false"><svg><use href="#i-sound"/></svg><span class="sound-slash"></span></button>
     </header>
     <section id="welcome" class="welcome" aria-labelledby="welcomeTitle">
-      <div class="welcome-tag"><span></span>送给爱动脑的小小探险家</div>
+      <div class="welcome-tag"><span></span>珞伊专属 · 小小探险世界</div>
       <p class="tiny-label">MIMI'S LITTLE ADVENTURE</p>
-      <h1 id="welcomeTitle">小小的脚步，<br>大大的<span>发现。</span></h1>
-      <p class="welcome-description">和小兔米米一起，<br>穿过森林，搬动木箱，叫醒云上的桥。<br>每一个好主意，都会让小岛亮起来。</p>
+      <h1 id="welcomeTitle">珞伊的小小脚步，<br>大大的<span>发现。</span></h1>
+      <p class="welcome-description">珞伊，和小兔米米一起，<br>穿过森林，搬动木箱，叫醒云上的桥。<br>你的每一个好主意，都会让小岛亮起来。</p>
       <div class="chapter-pills"><span>4 座小岛</span><i></i><span>24 个谜题</span><i></i><span>随时接着玩</span></div>
-      <button id="startBtn" class="primary" disabled>小岛准备中… <span>→</span></button>
-      <button id="welcomeMapBtn" class="text-button">先看看冒险地图 <svg><use href="#i-map"/></svg></button>
+      <button id="startBtn" class="primary" disabled>珞伊的小岛准备中… <span>→</span></button>
+      <button id="welcomeMapBtn" class="text-button">看看珞伊的冒险地图 <svg><use href="#i-map"/></svg></button>
       <p class="welcome-foot">不着急，想一想，再出发。</p>
     </section>
-    <div class="scene-caption" id="sceneCaption"><span class="caption-line"></span><div><strong>你好呀，我是米米。</strong><span>你愿意做我的冒险伙伴吗？</span></div></div>
+    <div class="scene-caption" id="sceneCaption"><span class="caption-line"></span><div><strong>珞伊，你好呀，我是米米。</strong><span>这是只属于你的冒险小岛。</span></div></div>
     <section id="gameHud" class="game-hud" hidden>
-      <div class="level-heading"><p id="chapterText" class="tiny-label">青草森林 · 01 / 24</p><h1 id="levelTitle">初次出发</h1></div>
+      <div class="level-heading"><p id="chapterText" class="tiny-label">珞伊专属 · 青草森林 · 01 / 24</p><h1 id="levelTitle">初次出发</h1></div>
       <div class="objective-bar"><div class="stars-status" aria-label="收集星星"><svg><use href="#i-star"/></svg><strong id="starCount">0 / 3</strong></div><span id="objectiveText">找齐星星，回到小屋</span></div>
       <button id="mapBtn" class="soft-button"><svg><use href="#i-map"/></svg>地图 <span id="completedCount">0/24</span></button>
     </section>
@@ -59,13 +59,13 @@
     <div id="loading" class="loading-indicator" role="status"><span></span>正在唤醒小岛…</div>
     <div id="failure" class="failure" hidden><h2>小岛还没打开</h2><p id="failureText">请刷新页面再试一次。</p><button id="reloadBtn" class="primary">重新打开</button><a href="index.html">返回学习小屋</a></div>
   </main>
-  <dialog id="mapDialog" class="map-dialog"><header class="dialog-header"><div><p class="tiny-label">YOUR ADVENTURE ATLAS</p><h2>每座小岛，都有新发现</h2></div><button class="round-button" data-close="mapDialog" aria-label="关闭冒险地图"><svg><use href="#i-close"/></svg></button></header><p class="dialog-intro">从第一关慢慢熟悉，也可以挑一个想试的谜题。</p><div id="islandMap"></div><p class="dialog-foot">每次玩 2—3 关就可以休息，下次接着探险。</p></dialog>
+  <dialog id="mapDialog" class="map-dialog"><header class="dialog-header"><div><p class="tiny-label">LUOYI'S ADVENTURE ATLAS</p><h2>珞伊的冒险地图</h2></div><button class="round-button" data-close="mapDialog" aria-label="关闭珞伊的冒险地图"><svg><use href="#i-close"/></svg></button></header><p class="dialog-intro">每座小岛都有新发现，从第一关慢慢熟悉，也可以挑一个想试的谜题。</p><div id="islandMap"></div><p class="dialog-foot">珞伊每次玩 2—3 关就可以休息，下次接着探险。</p></dialog>
   <dialog id="winDialog" class="win-dialog"><div class="win-stars" aria-hidden="true"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div><p class="tiny-label" id="winEyebrow">一份小小的发现</p><h2 id="winTitle">星星到家啦！</h2><p id="winMessage">你带着米米找到了回家的路。</p><div class="think-card"><span>和爸爸妈妈聊一句</span><p id="reflection">你刚才先去了哪里？为什么？</p></div><button id="nextBtn" class="primary">去下一站 <span>→</span></button><button id="restBtn" class="text-button">先休息，已经保存好了</button></dialog>
   <dialog id="helpDialog"><header class="dialog-header"><h2>和米米一起玩</h2><button class="round-button" data-close="helpDialog" aria-label="关闭玩法说明"><svg><use href="#i-close"/></svg></button></header><ol class="help-list"><li><strong>走一走</strong><p>点米米旁边的地块，或按右下角方向按钮。电脑也能按方向键 / WASD。转动视角后，方向按钮会跟着画面调整。</p></li><li><strong>找星星，送蜂蜜</strong><p>每关收集 3 颗金色星星。有木箱时，把箱子推到方形花纹垫上。只能推，不能拉。</p></li><li><strong>开桥，回小屋</strong><p>带圆圈的是机关。全部机关同时被米米或木箱压住，桥就会升起，并一直保持打开。完成任务后走到小屋门前。</p></li></ol><p>卡住时先点“小提示”。想换个办法就“退一步”，没有倒计时，也不扣分。</p><p class="dialog-foot">这是空间与逻辑小游戏；具体教材同步内容会在确认课本后另行加入。</p></dialog>
   <dialog id="resetDialog"><h2>这关重新开始吗？</h2><p>只重置当前小谜题，已完成的关卡会保留。</p><button id="confirmReset" class="primary">重新开始这关</button><button class="text-button" data-close="resetDialog">继续刚才的探索</button></dialog>
   <noscript><p class="failure">游戏需要浏览器启用 JavaScript。</p></noscript>
   <script src="three.min.js"></script>
-  <script src="island-logic.js?v=20260914b"></script>
-  <script src="space-puzzle.js?v=20260914b"></script>
+  <script src="island-logic.js?v=20260914c"></script>
+  <script src="space-puzzle.js?v=20260914c"></script>
 </body>
 </html>

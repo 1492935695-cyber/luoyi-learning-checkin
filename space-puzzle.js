@@ -240,7 +240,7 @@
   function updateHud(){
     const n=state.stars.toString(2).replace(/0/g,'').length;
     $('starCount').textContent=`${n} / ${l.stars.length}`;
-    $('chapterText').textContent=`${G.chapters[l.chapter].name} · ${String(levelIndex+1).padStart(2,'0')} / 24`;
+    $('chapterText').textContent=`珞伊专属 · ${G.chapters[l.chapter].name} · ${String(levelIndex+1).padStart(2,'0')} / 24`;
     $('levelTitle').textContent=l.name;$('completedCount').textContent=`${completed.size}/24`;
     let text='找齐星星，回到小屋';
     if(l.goals.length)text=`木箱就位 ${l.goals.filter(g=>state.boxes.includes(g)).length}/${l.goals.length}`;
@@ -291,9 +291,9 @@
   function showWin(){
     if(!G.won(l,state))return;
     tone(660,.18,.06);setTimeout(()=>tone(880,.28,.045),130);
-    $('winTitle').textContent=completed.size===24?'四座小岛都亮起来了！':'星星到家啦！';
+    $('winTitle').textContent=completed.size===24?'珞伊，四座小岛都亮起来了！':'珞伊，星星到家啦！';
     $('winEyebrow').textContent=`${G.chapters[l.chapter].name} · 第 ${levelIndex+1} 个小谜题`;
-    $('winMessage').textContent=sessionWins>=3?'今天已经探索了几个谜题，可以让眼睛休息一下啦。':'你带着米米完成了这一次探索。';
+    $('winMessage').textContent=sessionWins>=3?'珞伊今天已经探索了几个谜题，可以让眼睛休息一下啦。':'珞伊带着米米完成了这一次探索。';
     $('reflection').textContent=['你先去了哪颗星星那里？为什么？','如果想把箱子推向左边，你要站在哪一边？','小桥为什么会升起来？木箱帮了什么忙？','你先开桥还是先推箱子？说说你的安排。'][l.chapter];
     $('nextBtn').innerHTML=levelIndex===23?'回到冒险地图 <span>→</span>':'去下一站 <span>→</span>';
     $('restBtn').textContent=saveOK?'先休息，已经保存好了':'先休息，保留当前页面';$('winDialog').showModal();
@@ -330,7 +330,7 @@
     if(hintCount===1){say(l.tip+' 还想看一步方向，可以再点“小提示”。');return;}
     clearHint();const request=hintRequest;$('hintBtn').disabled=true;say('米米正在看看接下来可以怎么走…');
     try{
-      hintWorker=new Worker('island-hint-worker.js?v=20260914b');
+      hintWorker=new Worker('island-hint-worker.js?v=20260914c');
       hintWorker.onmessage=event=>{
         if(event.data.request!==hintRequest)return;const {path,status}=event.data;clearHint();
         if(path&&path.length){const screenD=(path[0]+cameraQuarter)%4;document.querySelector(`[data-dir="${screenD}"]`).classList.add('hint-pulse');say(`可以先往画面的${G.dirs[screenD].name}方走一步。亮起来的按钮就是这个方向。`);}
@@ -381,7 +381,7 @@
   $('soundBtn').onclick=()=>{sound=!sound;updateSound();enableAudio();tone(660,.14,.05);save();};
   $('rotateLeft').onclick=()=>rotate(-1);$('rotateRight').onclick=()=>rotate(1);
   $('nextBtn').onclick=()=>{$('winDialog').close();if(levelIndex===23)map();else loadLevel(levelIndex+1);};
-  $('restBtn').onclick=()=>{$('winDialog').close();save();started=false;app.classList.add('is-welcome');$('welcome').hidden=false;$('sceneCaption').hidden=false;$('gameHud').hidden=true;$('gameBottom').hidden=true;$('startBtn').innerHTML='下次接着探险 <span>→</span>';resize();};
+  $('restBtn').onclick=()=>{$('winDialog').close();save();started=false;app.classList.add('is-welcome');$('welcome').hidden=false;$('sceneCaption').hidden=false;$('gameHud').hidden=true;$('gameBottom').hidden=true;$('startBtn').innerHTML='珞伊下次接着探险 <span>→</span>';resize();};
   document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).close());
   document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>move(worldDirection(Number(b.dataset.dir))));
   document.addEventListener('keydown',event=>{
@@ -394,7 +394,7 @@
   try{
     makeScene();l=G.levels[levelIndex];state=savedStates[levelIndex]?clone(savedStates[levelIndex].state):G.initial(l);buildBoard();updateHud();updateSound();
     ready=true;$('loading').hidden=true;$('startBtn').disabled=false;
-    $('startBtn').innerHTML=(completed.size||state.moves?'继续我的探险':'和米米一起出发')+' <span>→</span>';
+    $('startBtn').innerHTML=(completed.size||state.moves?'珞伊继续探险':'珞伊和米米一起出发')+' <span>→</span>';
     requestAnimationFrame(animate);
     // Read-only diagnostics for rendering and automated gameplay validation.
     window.mimiGame={getState:()=>({level:levelIndex,state:clone(state),history:history.length,done:[...completed],started,moving:!!moveTween,cameraQuarter,ready,drawCalls:renderer.info.render.calls}),

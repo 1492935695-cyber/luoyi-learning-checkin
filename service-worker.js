@@ -1,4 +1,4 @@
-const CACHE_NAME = "luoyi-checkin-v5-mimi-20260914b";
+const CACHE_NAME = "luoyi-checkin-v6-owner-20260914c";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -10,12 +10,12 @@ const APP_FILES = [
   "./space-puzzle.html",
   "./space-puzzle.css",
   "./space-puzzle.js",
-  "./space-puzzle.html?v=20260914b",
-  "./space-puzzle.css?v=20260914b",
-  "./space-puzzle.js?v=20260914b",
+  "./space-puzzle.html?v=20260914c",
+  "./space-puzzle.css?v=20260914c",
+  "./space-puzzle.js?v=20260914c",
   "./three.min.js",
-  "./island-logic.js?v=20260914b",
-  "./island-hint-worker.js?v=20260914b",
+  "./island-logic.js?v=20260914c",
+  "./island-hint-worker.js?v=20260914c",
   "./manifest.webmanifest",
   "./app-icon.svg",
   "./robots.txt"
