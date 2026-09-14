@@ -33,10 +33,10 @@
     <section class="game-entry" aria-labelledby="game-entry-title">
       <div>
         <p class="eyebrow">今天想动动脑吗？</p>
-        <h2 id="game-entry-title">规律花园</h2>
-        <p>6 个小关卡，找规律、说理由，玩完就停。</p>
+        <h2 id="game-entry-title">米米的冒险岛</h2>
+        <p>和3D小兔一起找星星、推木箱、开小桥。4座小岛，24个谜题，随时接着玩。</p>
       </div>
-      <a class="game-entry__link" href="game.html">开始游戏 <span aria-hidden="true">→</span></a>
+      <a class="game-entry__link" href="space-puzzle.html?v=20260914b">开始探险 <span aria-hidden="true">→</span></a>
     </section>
 
     <section class="today-band" aria-labelledby="today-title">
@@ -105,12 +105,12 @@
   <script src="app.js" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    if (document.querySelector('a[href="space-puzzle.html"]')) return;
+    if (document.querySelector('a[href="game.html"]')) return;
     var main = document.querySelector('main') || document.body;
     var link = document.createElement('a');
-    link.href = 'space-puzzle.html';
+    link.href = 'game.html';
     link.className = 'tool-card';
-    link.innerHTML = '<span class="tool-icon">◇</span><span><strong>珞伊空间搭桥</strong><small>3D空间推理 · 12关</small></span><span class="tool-arrow">›</span>';
+    link.innerHTML = '<span class="tool-icon">◇</span><span><strong>规律花园</strong><small>找规律 · 6个小关卡</small></span><span class="tool-arrow">›</span>';
     main.appendChild(link);
   });
 </script>
