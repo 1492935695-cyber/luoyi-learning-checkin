@@ -1,0 +1,14 @@
+Spring Rig
+Copyright Blender Foundation / Blender Studio.
+Source: https://studio.blender.org/characters/spring/v1/
+License: Creative Commons Attribution 4.0 International
+https://creativecommons.org/licenses/by/4.0/
+
+Changes for this real-time learning story: baked geometry and pose, reduced
+subdivision, mobile PBR material conversion, texture downsampling, and an
+articulated head group. Hair uses the authored preview geometry with procedural
+surface detail, not the full offline particle hair. This is a licensed fictional
+character, not a likeness of Luoyi or any other real child.
+
+The companion concept preview used a Spring turnaround by Julien Kaspar,
+Blender Studio, CC BY 4.0. That preview is not included in the public game.

@@ -1,4 +1,4 @@
-const CACHE_NAME = "luoyi-checkin-v8-adventure-20260916b";
+const CACHE_NAME = "luoyi-checkin-v9-spring-20260916c";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -20,6 +20,16 @@ const APP_FILES = [
   "./app-icon.svg",
   "./robots.txt",
   "./learn-island.html",
+  "./spring-island.html",
+  "./spring-island.css?v=20260916c",
+  "./spring-story.js?v=20260916c",
+  "./spring-world.js?v=20260916c",
+  "./vendor/three.module.js",
+  "./vendor/loaders/GLTFLoader.js",
+  "./vendor/utils/BufferGeometryUtils.js",
+  "./assets/spring/spring.glb",
+  "./assets/spring/ATTRIBUTION.txt",
+  "./assets/qingting-badge-original.jpg",
   "./learn-island.css?v=20260916b",
   "./adventure-game.js?v=20260916b",
   "./adventure-world.js?v=20260916b",
