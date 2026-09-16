@@ -13,8 +13,9 @@
       const ints=(v,max)=>Array.isArray(v)?[...new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<max))]:[];
       out.progress[id]={...fresh(),step:p.step,counted:ints(p.counted,5),filled:ints(p.filled,4),sentence:ints(p.sentence,3),answered:p.answered===true,rearranged:p.rearranged===true};
     }
-    out.completed=Array.isArray(raw.completed)?[...new Set(raw.completed.filter(id=>lessons[id]))]:[];
-    out.last=lessons[raw.last]?raw.last:null;return out;
+    const valid=id=>typeof id==='string'&&Object.prototype.hasOwnProperty.call(lessons,id);
+    out.completed=Array.isArray(raw.completed)?[...new Set(raw.completed.filter(valid))]:[];
+    out.last=valid(raw.last)?raw.last:null;return out;
   }
   try{const saved=localStorage.getItem(KEY);if(saved)data=clean(JSON.parse(saved));}catch(_){data=empty();}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(_){$('connection').textContent='当前浏览器无法保存进度，可以继续玩';}}
@@ -85,8 +86,8 @@
   document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
   document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
   $('copy-link').onclick=async()=>{try{await navigator.clipboard.writeText(new URL('learn-island.html',location.href).href);$('copy-message').textContent='已复制，可以发给家人。';}catch(_){$('copy-message').textContent='请直接复制浏览器地址栏里的网址。';}};
-  $('export-progress').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='luoyi-learning-progress.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);$('data-message').textContent='已请求下载进度文件。下载完成后，可在另一台设备的同一网页导入。';};
-  $('import-progress').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>50000)throw Error('文件太大');const incoming=clean(JSON.parse(await file.text()));data=incoming;save();home();$('data-message').textContent='已导入珞伊的小岛进度。';}catch(_){$('data-message').textContent='这个文件不是有效的小岛进度，原来的记录已保留。';}e.target.value='';};
+  $('export-progress').onclick=async()=>{const text=JSON.stringify(data);$('progress-code').value=text;$('progress-code').focus();$('progress-code').select();try{await navigator.clipboard.writeText(text);$('data-message').textContent='已复制当前进度。另一台设备打开小岛，在这里粘贴并导入。';}catch(_){$('data-message').textContent='进度文字已选中，请长按复制；在另一台设备粘贴后导入。';}};
+  $('paste-progress').onclick=()=>{try{const text=$('progress-code').value;if(text.length>50000)throw Error('内容太长');data=clean(JSON.parse(text));save();home();$('data-message').textContent='已导入珞伊的小岛进度。';}catch(_){$('data-message').textContent='这段文字不是有效的小岛进度，原来的记录已保留。';}};
   try{world=new window.LearningWorld($('scene'),$('scene-labels'),worldPick);}catch(err){$('scene-fallback').hidden=false;$('world-hint').textContent='可以使用下面的大按钮完成游戏';console.warn('3D unavailable; accessible controls remain available.');}
   let offlineReady=false;
   function connection(){if(!navigator.onLine)$('connection').textContent=offlineReady?'离线小岛 · 可以继续玩':'当前离线 · 尚未确认课程已缓存';else $('connection').textContent=offlineReady?'已备好离线小岛 · 进度存在这台设备':'在线小岛 · 正在准备离线课程';}

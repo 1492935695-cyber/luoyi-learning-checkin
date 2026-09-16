@@ -5,3 +5,9 @@
 @media(max-width:380px){.brand strong{font-size:16px}.site-head{padding:12px}.welcome h1{font-size:27px}.course-copy strong{font-size:19px}.course-art,.course-art svg{width:68px}.course{gap:12px}.is-lesson .world{height:260px}#app{padding-left:12px;padding-right:12px}.primary{font-size:16px;padding:13px 18px}}
 @media(max-height:550px) and (min-width:641px){.is-lesson .world{height:350px}.site-head{padding-top:10px;padding-bottom:10px}.world{height:320px}.welcome h1{font-size:27px}.site-foot{margin-top:0}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+/* The pond is an open play area; labels and controls retain stable dimensions. */
+.progress-label{display:block;font-size:14px;margin:16px 0 8px}#progress-code{display:block;width:100%;resize:vertical;min-height:90px;border:1px solid var(--line);border-radius:8px;background:#fffef7;padding:12px;font:14px/1.6 monospace;color:var(--ink);margin-bottom:12px;overflow-wrap:anywhere}
+*{letter-spacing:0!important}.world,.is-lesson .world,.is-finished .world{border:0;border-radius:0;box-shadow:none;background:none}.world:after{display:none}.welcome h1{font-size:44px}.course{border-radius:8px}.world-top>span{background:#f5f8ec}.world-top button{background:#edf2e5}.course-copy strong{font-size:22px}
+@media(max-width:900px){.welcome h1{font-size:32px}.course-copy strong{font-size:20px}}
+@media(max-width:640px){.welcome h1{font-size:31px}.course-copy strong{font-size:21px}.is-lesson .world,.is-finished .world{height:285px}}
+@media(max-width:380px){.welcome h1{font-size:27px}.course-copy strong{font-size:19px}.is-lesson .world{height:270px}}
