@@ -1,4 +1,4 @@
-const CACHE_NAME = "luoyi-checkin-v7-learning-20260916a";
+const CACHE_NAME = "luoyi-checkin-v8-adventure-20260916b";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -20,10 +20,14 @@ const APP_FILES = [
   "./app-icon.svg",
   "./robots.txt",
   "./learn-island.html",
-  "./learn-island.css?v=20260916a",
-  "./learn-island.js?v=20260916a",
-  "./learning-scene.js?v=20260916a",
-  "./learning-lessons.js?v=20260916a",
+  "./learn-island.css?v=20260916b",
+  "./adventure-game.js?v=20260916b",
+  "./adventure-world.js?v=20260916b",
+  "./adventure-lessons.js?v=20260916b",
+  "./adventure-report.js?v=20260916b",
+  "./adventure-oral.js?v=20260916b",
+  "./pinyin-pro.min.js",
+  "./lucide.min.js",
   "./learning.webmanifest",
   "./learning-icon.svg",
   "./learning-icon-192.png",

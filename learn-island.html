@@ -3,68 +3,84 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f4f7ed">
+  <meta name="theme-color" content="#bee5e6">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="珞伊的小岛">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="description" content="珞伊的荷塘学习小岛，和小蜻蜓一起观察、思考、表达。">
-  <title>珞伊的学习小岛</title>
-  <link rel="icon" type="image/svg+xml" href="learning-icon.svg">
+  <title>珞伊的荷风小境</title>
+  <link rel="icon" href="learning-icon.svg">
   <link rel="apple-touch-icon" href="learning-icon-192.png">
   <link rel="manifest" href="learning.webmanifest">
-  <link rel="stylesheet" href="learn-island.css?v=20260916a">
+  <link rel="stylesheet" href="learn-island.css?v=20260916b">
   <script defer src="three.min.js"></script>
-  <script defer src="learning-scene.js?v=20260916a"></script>
-  <script defer src="learning-lessons.js?v=20260916a"></script>
-  <script defer src="learn-island.js?v=20260916a"></script>
+  <script defer src="pinyin-pro.min.js"></script>
+  <script defer src="lucide.min.js"></script>
+  <script defer src="adventure-lessons.js?v=20260916b"></script>
+  <script defer src="adventure-world.js?v=20260916b"></script>
+  <script defer src="adventure-report.js?v=20260916b"></script>
+  <script defer src="adventure-oral.js?v=20260916b"></script>
+  <script defer src="adventure-game.js?v=20260916b"></script>
 </head>
 <body>
-  <header class="site-head">
-    <a class="brand" href="learn-island.html" aria-label="珞伊的学习小岛首页"><img src="learning-icon.svg" alt="" width="48" height="48"><span><strong>珞伊的学习小岛</strong><small>蜻蜓伴我 · 逐光成长</small></span></a>
-    <button class="quiet-btn" id="parent-open">家长看这里</button>
-  </header>
-  <main id="app" class="is-home">
-    <section class="welcome" id="welcome">
-      <p class="eyebrow"><span class="small-sun"></span> 一片属于珞伊的小天地</p>
-      <h1>今天，和小蜻蜓<br>发现一点<span>新东西。</span></h1>
-      <p class="intro">找一找，动动手，再把发现说出来。<br>每次选一节，慢慢来就很好。</p>
-      <button class="primary" id="resume" hidden>接着上次的发现 <span aria-hidden="true">→</span></button>
-      <div class="welcome-note"><span class="line-leaf" aria-hidden="true"></span> 每节约 8—10 分钟 · 可以随时休息</div>
-    </section>
-    <section class="world" aria-label="珞伊的三维荷塘">
-      <div class="world-top"><span id="world-tag">珞伊的小荷塘</span><button class="quiet-btn" id="view-turn" aria-label="换个方向看荷塘">转一转</button></div>
-      <div id="scene" role="img" aria-label="有荷叶、小屋、小兔和绿色蜻蜓的立体荷塘"></div>
-      <div id="scene-fallback" hidden>这台设备暂时无法显示立体荷塘。下面的大按钮仍然可以完成观察游戏。</div>
-      <p class="world-hint" id="world-hint">点一点荷塘，小蜻蜓会飞过去</p>
-      <div id="scene-labels" aria-hidden="true"></div>
-    </section>
-    <section class="lesson-panel" id="lesson-panel" hidden aria-label="珞伊当前的小任务">
-      <div class="lesson-top"><button class="quiet-btn" id="back-home">‹ 回小岛</button><span id="lesson-count"></span></div>
-      <div id="step-dots" class="step-dots" aria-hidden="true"></div>
-      <p class="eyebrow" id="subject-tag"></p>
-      <h1 id="task-title" tabindex="-1"></h1>
-      <p id="task-prompt" class="task-prompt"></p>
-      <button id="listen" class="listen-btn" aria-label="听一听这一步的讲解"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm13-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><span>听一听</span></button>
-      <div id="task-controls"></div>
-      <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
-      <div class="task-actions"><button class="quiet-btn" id="hint">给我一点提示</button><button class="primary" id="next" hidden>下一步 <span aria-hidden="true">→</span></button></div>
-      <p id="oral-note" class="oral-note" hidden>说给身边的大人听，再点完成。这里不录音、不自动评判口语。</p>
-    </section>
-    <section class="courses" id="courses" aria-label="选择珞伊今天的课程">
-      <button class="course math" data-course="math"><span class="course-art" aria-hidden="true"><svg viewBox="0 0 100 82"><ellipse cx="48" cy="64" rx="34" ry="8" fill="#c5d7b0"/><path d="M18 51q28-42 65-23Q81 62 48 63Z" fill="#78a453"/><path d="M48 61 69 38" stroke="#e6f0c9" stroke-width="3"/><circle cx="34" cy="30" r="12" fill="#e6b955"/><circle cx="60" cy="20" r="12" fill="#f5d271"/><circle cx="68" cy="45" r="12" fill="#edbe58"/><text x="34" y="35" text-anchor="middle">1</text><text x="60" y="25" text-anchor="middle">2</text><text x="68" y="50" text-anchor="middle">3</text></svg></span><span class="course-copy"><small>数学 · 开篇体验</small><strong>珞伊的荷塘寻宝</strong><span>数得清，也能说清为什么</span><em id="math-status">去发现 →</em></span></button>
-      <button class="course chinese" data-course="chinese"><span class="course-art" aria-hidden="true"><svg viewBox="0 0 100 82"><ellipse cx="50" cy="66" rx="35" ry="7" fill="#c4dce0"/><path d="M16 18q16-6 34 6 18-12 34-6v44q-17-5-34 5-18-10-34-5Z" fill="#fffaf0" stroke="#81aeb4" stroke-width="3"/><path d="M50 25v40M24 32l18 5m-18 6 18 5m16-11 17-5m-17 16 17-5" stroke="#9cc7cd" stroke-width="3" fill="none"/></svg></span><span class="course-copy"><small>语文 · 开篇体验</small><strong>珞伊的荷塘故事</strong><span>看仔细，把一句话讲完整</span><em id="chinese-status">去讲述 →</em></span></button>
-    </section>
-    <section class="completion" id="completion" hidden aria-label="珞伊的发现记录">
-      <p class="eyebrow">珞伊的发现手册</p><h1 id="finish-title"></h1><p id="finish-copy"></p>
-      <div class="discovery"><span class="line-leaf" aria-hidden="true"></span><p id="discovery-copy"></p></div>
-      <div class="transfer"><strong>把发现带到生活里</strong><p id="transfer-copy"></p></div>
-      <p class="finish-gentle">今天这一节到这里。去伸伸腰，看看远处吧。</p>
-      <button class="primary" id="finish-home">回到珞伊的小岛</button>
-    </section>
+  <main id="game" class="is-start" aria-label="珞伊的三维冒险">
+    <div id="scene" tabindex="0" aria-label="三维荷塘，可点按地面行走或用方向键移动"></div>
+    <div id="world-labels" aria-hidden="true"></div>
+    <header class="hud">
+      <div class="identity"><div class="name" data-ruby>珞伊的荷风小境</div><div id="chapter" class="chapter"></div></div>
+      <nav aria-label="游戏工具">
+        <button id="map-open" class="icon" aria-label="地图" title="地图"><i data-lucide="map"></i></button>
+        <button id="sound" class="icon" aria-label="打开声音" title="打开声音"><i data-lucide="volume-x"></i></button>
+        <button id="pause" class="icon" aria-label="休息" title="休息"><i data-lucide="pause"></i></button>
+        <button id="parent-open" class="icon" aria-label="家长设置" title="家长设置"><i data-lucide="settings-2"></i></button>
+      </nav>
+    </header>
+    <div id="objective" class="objective"><span id="objective-text"></span><span id="counter" class="counter"></span></div>
+    <div id="caption" class="caption" role="status" aria-live="polite"></div>
+    <div class="controls">
+      <div id="stick" class="stick" role="group" aria-label="移动摇杆"><i data-lucide="move" aria-hidden="true"></i><div id="stick-knob"></div></div>
+      <div class="action-set">
+        <button id="drop" class="icon small-action" aria-label="放下" title="放下" hidden><i data-lucide="package-open"></i></button>
+        <button id="listen" class="icon small-action" aria-label="再听一次" title="再听一次"><i data-lucide="speech"></i></button>
+        <button id="jump-single" class="act jump-action" aria-label="单脚跳" hidden><i data-lucide="person-standing"></i><span data-ruby>单脚</span></button>
+        <button id="jump-double" class="act jump-action" aria-label="双脚跳" hidden><i data-lucide="footprints"></i><span data-ruby>双脚</span></button>
+        <button id="act" class="act" aria-label="邀请或会合"><i data-lucide="hand"></i><span id="act-text" data-ruby>邀请</span></button>
+      </div>
+    </div>
+    <div id="start-screen" class="start-screen"><p data-ruby>珞伊，荷塘在等你</p><button id="start" class="primary"><i data-lucide="play"></i><span data-ruby>出发</span></button></div>
+    <div id="error" class="error" hidden><p data-ruby>小岛暂时没有打开</p><p data-ruby>请让爸爸妈妈帮忙刷新</p><button id="retry" class="primary" data-ruby>再试一次</button></div>
+    <span class="sr-only" id="save-warning" role="status"></span>
   </main>
-  <footer class="site-foot"><span id="connection" role="status">正在准备小岛…</span><a href="index.html">学习打卡</a><a href="space-puzzle.html?v=20260914c">米米冒险岛</a><button class="link-btn" id="install-help">放到 iPad 桌面</button></footer>
-  <dialog id="parent-dialog" aria-labelledby="parent-title"><button class="dialog-close quiet-btn" data-close aria-label="关闭家长说明">关闭 ×</button><p class="eyebrow">陪着玩一点，就很好</p><h2 id="parent-title">给珞伊家长的小纸条</h2><p>数学练有序观察、一一对应和数量不随摆放改变；语文练看图、完整表达和迁移讲述。每次选一科，边操作边说，约 8—10 分钟。熟练的基础活动可以跳过。</p><p>这是依据已确认的人教版一年级上册方向设计的<strong>开篇能力体验</strong>，使用原创荷塘情境；尚未逐页核对课本内页，不标注未经确认的课名和页码。</p><p>“完成”表示参加过活动，不等于已经掌握。口头任务请听珞伊自己说；页面不录音，不做自动口语评分。</p><p>进度只存在当前设备。首次需要联网，显示“已备好离线小岛”后可尝试断网使用；清理网站数据或系统回收缓存后需重新联网。语音效果取决于设备的中文声音。</p><label class="progress-label" for="progress-code">跨设备进度文字</label><textarea id="progress-code" rows="3" spellcheck="false" placeholder="从另一台设备复制来的进度文字，粘贴在这里"></textarea><div class="parent-actions"><button class="secondary" id="export-progress">复制当前进度</button><button class="secondary" id="paste-progress">导入上面的进度</button></div><p id="data-message" role="status"></p><p class="small-print">荷塘配色和绿色蜻蜓参考家长指定的班徽风格。游戏角色为原创立体伙伴，不作为班徽替代图。公开页面不放学校、班级和教师信息。</p></dialog>
-  <dialog id="install-dialog" aria-labelledby="install-title"><button class="dialog-close quiet-btn" data-close>关闭 ×</button><h2 id="install-title">把珞伊的小岛放到桌面</h2><p>在 iPad 的 Safari 打开这个网址，点“分享”，再点“添加到主屏幕”。以后点桌面上的“珞伊的小岛”就能回来。</p><p>电脑关机不影响已发布的网站。第一次打开需要联网，后续能否离线使用以页面底部的准备状态为准。</p><button class="primary" id="copy-link">复制小岛网址</button><p id="copy-message" role="status"></p></dialog>
-  <noscript>请开启浏览器的 JavaScript 后再打开珞伊的小岛。</noscript>
+  <dialog id="map-dialog"><div class="dialog-head"><h2 data-ruby>珞伊的游历图</h2><button class="icon" data-close aria-label="关闭" title="关闭"><i data-lucide="x"></i></button></div><div id="chapter-list" class="chapter-list"></div></dialog>
+  <dialog id="rest-dialog"><div class="dialog-head"><h2 id="rest-title" data-ruby>珞伊，歇一歇</h2></div><p data-ruby>看看远处，动动身体。</p><p data-ruby>小岛会等你回来。</p><button id="rest-continue" class="primary" data-ruby>回到小岛</button></dialog>
+  <dialog id="finish-dialog"><h2 data-ruby>珞伊，小路通啦</h2><p id="finish-note"></p><button id="oral-open" class="secondary" data-ruby>读给朋友听</button><div class="finish-actions"><button id="finish-rest" class="primary" data-ruby>先歇一歇</button><button id="finish-next" class="secondary" data-ruby>再去一处</button></div></dialog>
+  <dialog id="parent-dialog" class="parent-dialog">
+    <div class="dialog-head"><h2 data-ruby>家长小笺</h2><button class="icon" data-close aria-label="关闭" title="关闭"><i data-lucide="x"></i></button></div>
+    <p data-ruby>每次选一处，约五到八分钟。疲惫时随时结束，不补做。</p>
+    <p data-ruby>本次四处游历对应家长上传的教材开篇图文，不代表整本教材已经制作完成。</p>
+    <p data-ruby>人教版一年级上册。语文依据我是中国人；数学依据校园观察与操场游戏。尚不知道学校当天进度。</p>
+    <div id="lesson-source" class="source-note"></div>
+    <p data-ruby>通关只说明完成了操作，不代表独立识字或掌握知识。拼音始终显示，不能据此判断是否已经识字。</p>
+    <p data-ruby>大字不能预防近视。保持合适距离和照明，保留户外活动、睡眠与休息。</p>
+    <p data-ruby>角色是原创卡通形象，不是孩子照片。没有广告、排名或在线聊天。自愿朗读的录音仅供当前页面临时回听，不上传。</p>
+    <p id="voice-note"></p><p id="offline-note"></p>
+    <button id="report-open" class="primary" data-ruby>学习过程报告</button>
+    <div class="parent-actions"><button id="replay" class="secondary" data-ruby>重玩本关</button><button id="export" class="secondary" data-ruby>导出进度</button></div>
+    <label for="progress" data-ruby>跨设备进度文字</label><textarea id="progress" rows="3" spellcheck="false"></textarea><button id="import" class="secondary" data-ruby>导入进度</button><p id="import-note" role="status"></p>
+    <p data-ruby>进度保存在当前浏览器，不会自动跨设备同步。旧版学习记录没有删除。</p><a href="index.html" data-ruby>学习打卡</a>
+  </dialog>
+  <dialog id="report-dialog" class="parent-dialog">
+    <div class="dialog-head"><h2 data-ruby>珞伊的学习过程报告</h2><button class="icon" data-close aria-label="关闭" title="关闭"><i data-lucide="x"></i></button></div>
+    <div id="report-body"></div><label for="parent-observation" data-ruby>家长补充观察</label><textarea id="parent-observation" rows="2" maxlength="500"></textarea>
+    <p data-ruby>可写是否有人协助、珞伊说了什么。不要填写联系方式或其他孩子的信息。</p>
+    <div class="parent-actions"><button id="report-copy" class="primary" data-ruby>复制报告</button><button id="report-print" class="secondary" data-ruby>打印报告</button></div>
+    <textarea id="report-text" rows="5" readonly aria-label="可复制的报告全文"></textarea><p id="report-note" role="status"></p>
+  </dialog>
+  <dialog id="oral-dialog">
+    <div class="dialog-head"><h2 data-ruby>珞伊的朗读小站</h2><button class="icon" data-close aria-label="关闭" title="关闭"><i data-lucide="x"></i></button></div>
+    <div class="oral-lines"><div class="oral-line" data-ruby>我是中国人。</div><div class="oral-line" data-ruby>我们都是中国人。</div><div class="oral-line" data-ruby>中华民族是一家。</div></div>
+    <div class="oral-tools"><button id="oral-listen" class="secondary" data-ruby>听一句</button><button id="oral-record" class="primary" data-ruby>我来读一句</button><button id="oral-stop" class="secondary" data-ruby hidden>读好了</button><button id="oral-play" class="secondary" data-ruby disabled>听听自己</button></div><p id="oral-status" role="status"></p>
+    <fieldset class="oral-observation"><legend data-ruby>家长观察，不是机器评分</legend><label><input type="radio" name="oral-observation" value="independent"><span data-ruby>自己读了一句</span></label><label><input type="radio" name="oral-observation" value="supported"><span data-ruby>跟读了一句</span></label><label><input type="radio" name="oral-observation" value="not-observed"><span data-ruby>暂未观察</span></label></fieldset>
+    <button id="oral-done" class="secondary" data-ruby>回到朋友身边</button>
+  </dialog>
+  <noscript>请开启 JavaScript。qǐng kāi qǐ JavaScript。</noscript>
 </body>
 </html>
