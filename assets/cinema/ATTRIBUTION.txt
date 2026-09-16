@@ -7,6 +7,11 @@ Interactive cast models are reduced, baked mobile adaptations of these same fict
 The source character and topology are not original Codex artwork or real-person portraits.
 Original game code, environment geometry, scripts and interaction design prepared in this project.
 Class emblem supplied and approved by the parent; reproduced intact.
-Dialogue: original fictional script. Voices: synthetic Microsoft Edge neural voices via edge-tts 7.2.8.
+Dialogue: original fictional script. Earlier cinema videos use synthetic Microsoft Edge neural voices via edge-tts 7.2.8.
+Named companion additions and the forest mathematics journey use locally installed,
+offline Windows Chinese speech synthesis. Adult male parts use Kangkang; female parts
+use Huihui or Yaoyao. The journey did not send names or scripts to an external TTS service.
+Journey additions: six distinct fictional cast variants with baked speech, blink and
+gesture morph targets; authored theatre forest and interactive manipulable objects.
 Voices do not clone the child, family, classmates or teachers. No child audio was uploaded.
 Textbook scans and private family records are not included in this website.
