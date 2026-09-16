@@ -60,8 +60,13 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || !event.request.url.startsWith(self.registration.scope)) return;
+  // Video players on iOS request byte ranges. Cache.put rejects 206 responses.
+  if (event.request.headers.has("range")) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
   const remote = fetch(event.request).then(async (response) => {
-    if (response.ok) {
+    if (response.status === 200) {
       const cache = await caches.open(CACHE_NAME);
       await cache.put(event.request, response.clone());
     }

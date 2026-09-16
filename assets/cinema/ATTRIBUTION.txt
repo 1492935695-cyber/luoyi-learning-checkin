@@ -1,0 +1,12 @@
+Spring Rig (CC-BY) Blender Foundation | studio.blender.org
+Source: https://studio.blender.org/characters/spring/v1/
+License: https://creativecommons.org/licenses/by/4.0/
+Adaptation for Luoyi's Dragonfly Theatre: fictional character styling, clothing shaders,
+hair variants, original environments, lighting, authored poses and audio-envelope mouth animation.
+Interactive cast models are reduced, baked mobile adaptations of these same fictional designs.
+The source character and topology are not original Codex artwork or real-person portraits.
+Original game code, environment geometry, scripts and interaction design prepared in this project.
+Class emblem supplied and approved by the parent; reproduced intact.
+Dialogue: original fictional script. Voices: synthetic Microsoft Edge neural voices via edge-tts 7.2.8.
+Voices do not clone the child, family, classmates or teachers. No child audio was uploaded.
+Textbook scans and private family records are not included in this website.
