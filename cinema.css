@@ -2,5 +2,6 @@
 #knowledge.live{top:167px;justify-content:flex-start;pointer-events:none}#knowledge.live span{display:block;background:#fff7e8ed;padding:12px 22px;border:1px solid #decf9d;border-radius:16px;box-shadow:0 3px 16px #294d3f22}
 .boat-closeup{transform:scale(1.8);transform-origin:50% 66%}
 .radio-on header img{animation:radio-glow 2.2s ease-in-out infinite}.radio-on #speaker::before{content:"◉ ";color:#ffe2a0}
+.conversation #task-controls,.conversation #task-banner{visibility:hidden;pointer-events:none}.conversation #caption{bottom:76px}.conversation #film{opacity:0}.conversation #caption p{font-size:19px;line-height:1.7}
 @keyframes radio-glow{0%,100%{box-shadow:0 0 0 0 #f4cf8580}65%{box-shadow:0 0 0 10px #f4cf8500}}
 @media(prefers-reduced-motion:reduce){.radio-on header img{animation:none;box-shadow:0 0 0 4px #f4cf8566}}
