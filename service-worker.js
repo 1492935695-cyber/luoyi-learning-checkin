@@ -1,4 +1,4 @@
-const CACHE_NAME = "luoyi-checkin-v6-owner-20260914c";
+const CACHE_NAME = "luoyi-checkin-v7-learning-20260916a";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -18,12 +18,21 @@ const APP_FILES = [
   "./island-hint-worker.js?v=20260914c",
   "./manifest.webmanifest",
   "./app-icon.svg",
-  "./robots.txt"
+  "./robots.txt",
+  "./learn-island.html",
+  "./learn-island.css?v=20260916a",
+  "./learn-island.js?v=20260916a",
+  "./learning-scene.js?v=20260916a",
+  "./learning-lessons.js?v=20260916a",
+  "./learning.webmanifest",
+  "./learning-icon.svg",
+  "./learning-icon-192.png",
+  "./learning-icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_FILES)));
-  self.skipWaiting();
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", (event) => {
@@ -32,18 +41,31 @@ self.addEventListener("activate", (event) => {
       keys.filter((key) => key.startsWith("luoyi-checkin-") && key !== CACHE_NAME).map((key) => caches.delete(key))
     ))
   );
-  self.clients.claim();
+  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || !event.request.url.startsWith(self.registration.scope)) return;
-  event.respondWith(
-    fetch(event.request).then((response) => {
-      if (response.ok) {
-        const copy = response.clone();
-        event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)));
-      }
-      return response;
-    }).catch(() => caches.match(event.request).then((cached) => cached || caches.match(new URL(event.request.url).pathname)))
-  );
+  const remote = fetch(event.request).then(async (response) => {
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.put(event.request, response.clone());
+    }
+    return response;
+  });
+  event.waitUntil(remote.catch(() => {}));
+  event.respondWith((async () => {
+    const cached = await caches.match(event.request) || await caches.match(new URL(event.request.url).pathname);
+    if (cached) {
+      // A weak connection must not leave an already downloaded lesson waiting forever.
+      let timer;
+      try {
+        const response = await Promise.race([remote, new Promise(resolve => { timer = setTimeout(() => resolve(null), 1800); })]);
+        return response && response.ok ? response : cached;
+      } catch (_) { return cached; }
+      finally { clearTimeout(timer); }
+    }
+    try { return await remote; }
+    catch (_) { return new Response('Please reconnect to load this page for the first time.', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }); }
+  })());
 });

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f7ed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="珞伊的小岛">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="description" content="珞伊的荷塘学习小岛，和小蜻蜓一起观察、思考、表达。">
+  <title>珞伊的学习小岛</title>
+  <link rel="icon" type="image/svg+xml" href="learning-icon.svg">
+  <link rel="apple-touch-icon" href="learning-icon-192.png">
+  <link rel="manifest" href="learning.webmanifest">
+  <link rel="stylesheet" href="learn-island.css?v=20260916a">
+  <script defer src="three.min.js"></script>
+  <script defer src="learning-scene.js?v=20260916a"></script>
+  <script defer src="learning-lessons.js?v=20260916a"></script>
+  <script defer src="learn-island.js?v=20260916a"></script>
+</head>
+<body>
+  <header class="site-head">
+    <a class="brand" href="learn-island.html" aria-label="珞伊的学习小岛首页"><img src="learning-icon.svg" alt="" width="48" height="48"><span><strong>珞伊的学习小岛</strong><small>蜻蜓伴我 · 逐光成长</small></span></a>
+    <button class="quiet-btn" id="parent-open">家长看这里</button>
+  </header>
+  <main id="app" class="is-home">
+    <section class="welcome" id="welcome">
+      <p class="eyebrow"><span class="small-sun"></span> 一片属于珞伊的小天地</p>
+      <h1>今天，和小蜻蜓<br>发现一点<span>新东西。</span></h1>
+      <p class="intro">找一找，动动手，再把发现说出来。<br>每次选一节，慢慢来就很好。</p>
+      <button class="primary" id="resume" hidden>接着上次的发现 <span aria-hidden="true">→</span></button>
+      <div class="welcome-note"><span class="line-leaf" aria-hidden="true"></span> 每节约 8—10 分钟 · 可以随时休息</div>
+    </section>
+    <section class="world" aria-label="珞伊的三维荷塘">
+      <div class="world-top"><span id="world-tag">珞伊的小荷塘</span><button class="quiet-btn" id="view-turn" aria-label="换个方向看荷塘">转一转</button></div>
+      <div id="scene" role="img" aria-label="有荷叶、小屋、小兔和绿色蜻蜓的立体荷塘"></div>
+      <div id="scene-fallback" hidden>这台设备暂时无法显示立体荷塘。下面的大按钮仍然可以完成观察游戏。</div>
+      <p class="world-hint" id="world-hint">点一点荷塘，小蜻蜓会飞过去</p>
+      <div id="scene-labels" aria-hidden="true"></div>
+    </section>
+    <section class="lesson-panel" id="lesson-panel" hidden aria-label="珞伊当前的小任务">
+      <div class="lesson-top"><button class="quiet-btn" id="back-home">‹ 回小岛</button><span id="lesson-count"></span></div>
+      <div id="step-dots" class="step-dots" aria-hidden="true"></div>
+      <p class="eyebrow" id="subject-tag"></p>
+      <h1 id="task-title" tabindex="-1"></h1>
+      <p id="task-prompt" class="task-prompt"></p>
+      <button id="listen" class="listen-btn" aria-label="听一听这一步的讲解"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm13-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><span>听一听</span></button>
+      <div id="task-controls"></div>
+      <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+      <div class="task-actions"><button class="quiet-btn" id="hint">给我一点提示</button><button class="primary" id="next" hidden>下一步 <span aria-hidden="true">→</span></button></div>
+      <p id="oral-note" class="oral-note" hidden>说给身边的大人听，再点完成。这里不录音、不自动评判口语。</p>
+    </section>
+    <section class="courses" id="courses" aria-label="选择珞伊今天的课程">
+      <button class="course math" data-course="math"><span class="course-art" aria-hidden="true"><svg viewBox="0 0 100 82"><ellipse cx="48" cy="64" rx="34" ry="8" fill="#c5d7b0"/><path d="M18 51q28-42 65-23Q81 62 48 63Z" fill="#78a453"/><path d="M48 61 69 38" stroke="#e6f0c9" stroke-width="3"/><circle cx="34" cy="30" r="12" fill="#e6b955"/><circle cx="60" cy="20" r="12" fill="#f5d271"/><circle cx="68" cy="45" r="12" fill="#edbe58"/><text x="34" y="35" text-anchor="middle">1</text><text x="60" y="25" text-anchor="middle">2</text><text x="68" y="50" text-anchor="middle">3</text></svg></span><span class="course-copy"><small>数学 · 开篇体验</small><strong>珞伊的荷塘寻宝</strong><span>数得清，也能说清为什么</span><em id="math-status">去发现 →</em></span></button>
+      <button class="course chinese" data-course="chinese"><span class="course-art" aria-hidden="true"><svg viewBox="0 0 100 82"><ellipse cx="50" cy="66" rx="35" ry="7" fill="#c4dce0"/><path d="M16 18q16-6 34 6 18-12 34-6v44q-17-5-34 5-18-10-34-5Z" fill="#fffaf0" stroke="#81aeb4" stroke-width="3"/><path d="M50 25v40M24 32l18 5m-18 6 18 5m16-11 17-5m-17 16 17-5" stroke="#9cc7cd" stroke-width="3" fill="none"/></svg></span><span class="course-copy"><small>语文 · 开篇体验</small><strong>珞伊的荷塘故事</strong><span>看仔细，把一句话讲完整</span><em id="chinese-status">去讲述 →</em></span></button>
+    </section>
+    <section class="completion" id="completion" hidden aria-label="珞伊的发现记录">
+      <p class="eyebrow">珞伊的发现手册</p><h1 id="finish-title"></h1><p id="finish-copy"></p>
+      <div class="discovery"><span class="line-leaf" aria-hidden="true"></span><p id="discovery-copy"></p></div>
+      <div class="transfer"><strong>把发现带到生活里</strong><p id="transfer-copy"></p></div>
+      <p class="finish-gentle">今天这一节到这里。去伸伸腰，看看远处吧。</p>
+      <button class="primary" id="finish-home">回到珞伊的小岛</button>
+    </section>
+  </main>
+  <footer class="site-foot"><span id="connection" role="status">正在准备小岛…</span><a href="index.html">学习打卡</a><a href="space-puzzle.html?v=20260914c">米米冒险岛</a><button class="link-btn" id="install-help">放到 iPad 桌面</button></footer>
+  <dialog id="parent-dialog" aria-labelledby="parent-title"><button class="dialog-close quiet-btn" data-close aria-label="关闭家长说明">关闭 ×</button><p class="eyebrow">陪着玩一点，就很好</p><h2 id="parent-title">给珞伊家长的小纸条</h2><p>数学练有序观察、一一对应和数量不随摆放改变；语文练看图、完整表达和迁移讲述。每次选一科，边操作边说，约 8—10 分钟。熟练的基础活动可以跳过。</p><p>这是依据已确认的人教版一年级上册方向设计的<strong>开篇能力体验</strong>，使用原创荷塘情境；尚未逐页核对课本内页，不标注未经确认的课名和页码。</p><p>“完成”表示参加过活动，不等于已经掌握。口头任务请听珞伊自己说；页面不录音，不做自动口语评分。</p><p>进度只存在当前设备。首次需要联网，显示“已备好离线小岛”后可尝试断网使用；清理网站数据或系统回收缓存后需重新联网。语音效果取决于设备的中文声音。</p><div class="parent-actions"><button class="secondary" id="export-progress">导出进度</button><label class="secondary file-label">导入进度<input type="file" id="import-progress" accept="application/json,.json"></label></div><p id="data-message" role="status"></p><p class="small-print">荷塘配色和绿色蜻蜓参考家长指定的班徽风格。游戏角色为原创立体伙伴，不作为班徽替代图。公开页面不放学校、班级和教师信息。</p></dialog>
+  <dialog id="install-dialog" aria-labelledby="install-title"><button class="dialog-close quiet-btn" data-close>关闭 ×</button><h2 id="install-title">把珞伊的小岛放到桌面</h2><p>在 iPad 的 Safari 打开这个网址，点“分享”，再点“添加到主屏幕”。以后点桌面上的“珞伊的小岛”就能回来。</p><p>电脑关机不影响已发布的网站。第一次打开需要联网，后续能否离线使用以页面底部的准备状态为准。</p><button class="primary" id="copy-link">复制小岛网址</button><p id="copy-message" role="status"></p></dialog>
+  <noscript>请开启浏览器的 JavaScript 后再打开珞伊的小岛。</noscript>
+</body>
+</html>
