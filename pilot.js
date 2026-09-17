@@ -1,16 +1,28 @@
-import {PILOTS,PEOPLE,PILOT_VERSION,EXTRA_SPEECH} from './pilot-data.js?v=discovery1';
-import {PilotWorld} from './pilot-world.js?v=discovery1';
+import {PILOTS,PEOPLE,PILOT_VERSION,EXTRA_SPEECH} from './pilot-data.js?v=discovery2';
+import {PilotWorld} from './pilot-world.js?v=discovery2';
 const $=id=>document.getElementById(id),audio=$('voice'),KEY='luoyi-pilots-v1',py={天:'tiān',地:'dì',人:'rén',我:'wǒ',你:'nǐ',他:'tā'};
 const responses=Object.fromEntries(EXTRA_SPEECH.map(x=>[x.id,x])),findWords=['天','地','人','我','你','他'],readWords=['天','地','人','你','我','他'];
 const blank=()=>({version:1,...Object.fromEntries(Object.keys(PILOTS).map(k=>[k,{index:0,done:false,events:[]}])),oral:'未观察',note:''});
 let save;try{const d=JSON.parse(localStorage.getItem(KEY));if(d.version!==1||!['math','chinese'].every(k=>Number.isInteger(d[k]?.index)&&d[k].index>=0&&d[k].index<PILOTS[k].beats.length&&Array.isArray(d[k].events)&&d[k].events.length<=1500))throw Error();d.math_bonus||={index:0,done:false,events:[]};save=d;}catch{save=blank();}
 if(save.contentVersion!==PILOT_VERSION){for(const s of ['math','chinese']){const oldId=(s==='math'?'m':'c')+String(save[s].index+1).padStart(2,'0');const found=PILOTS[s].beats.findIndex(b=>b.id===oldId);save[s].index=Math.max(0,found);}save.contentVersion=PILOT_VERSION;}
-let world,manifest,ep,index=0,phase='home',task,step=0,token=0,locked=false,paused=false,cue=null,resolveAudio,afterRetry,loadingSubject,noticeTimer,pendingAdvance=false;
+let world,manifest,ep,index=0,phase='home',task,step=0,token=0,locked=false,paused=false,cue=null,resolveAudio,afterRetry,loadingSubject,noticeTimer,pendingAdvance=false,audioWatchdog;
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(save));}catch{notice('浏览器未能保存，请在家长手记保存报告。');}}
 function event(kind,more={}){if(!ep)return;save[ep.id].events.push({time:new Date().toISOString(),version:PILOT_VERSION,beat:ep.beats[index]?.id,kind,...more});save[ep.id].events=save[ep.id].events.slice(-1500);persist();}
 function notice(s){$('notice').textContent=s;$('notice').classList.add('show');clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>$('notice').classList.remove('show'),2200);}
-function stopAudio(){audio.pause();resolveAudio?.(false);resolveAudio=null;afterRetry=null;cue=null;$('audio-retry').hidden=true;if(world){world.speaker=null;world.level=0;}}
-function play(id){stopAudio();const c=manifest.lines[id];if(!c){notice('这一句声音还没准备好，请稍后重试。');return Promise.resolve(false);}cue=c;audio.src='assets/pilot/'+c.file+'?v='+PILOT_VERSION;world.speaker=c.who;world.level=0;return new Promise(resolve=>{resolveAudio=resolve;audio.onended=()=>{world.level=0;world.speaker=null;resolveAudio=null;resolve(true);};audio.onerror=()=>{$('audio-retry').textContent='声音没加载好，点一下重试';$('audio-retry').hidden=false;afterRetry=()=>{audio.load();return audio.play();};};afterRetry=()=>audio.play();audio.play().then(()=>{$('audio-retry').hidden=true;}).catch(()=>{$('audio-retry').textContent='点一下，听朋友说话';$('audio-retry').hidden=false;});});}
+function stopAudio(){clearTimeout(audioWatchdog);audio.onended=audio.onerror=audio.ontimeupdate=null;audio.pause();resolveAudio?.(false);resolveAudio=null;afterRetry=null;cue=null;$('audio-retry').hidden=true;if(world){world.speaker=null;world.level=0;}}
+function play(id){
+ stopAudio();const c=manifest.lines[id];if(!c){notice('这一句声音还没准备好，请稍后重试。');return Promise.resolve(false);}cue=c;audio.src='assets/pilot/'+c.file+'?v='+PILOT_VERSION;world.speaker=c.who;world.level=0;
+ return new Promise(resolve=>{
+  resolveAudio=resolve;let autoRetried=false,attempt=0,lastTime=-1;
+  const current=()=>cue===c&&resolveAudio===resolve;
+  const showRetry=()=>{if(!current())return;clearTimeout(audioWatchdog);audio.pause();$('audio-retry').textContent='声音还没来，点一下再听';$('audio-retry').hidden=false;};
+  const arm=()=>{clearTimeout(audioWatchdog);audioWatchdog=setTimeout(()=>{if(!current())return;if(paused){arm();return;}if(autoRetried)showRetry();else{autoRetried=true;launch(true);}},12000);};
+  const launch=(reload=false)=>{if(!current())return Promise.resolve();const own=++attempt;$('audio-retry').hidden=true;if(reload)audio.load();lastTime=audio.currentTime;arm();const promise=audio.play();promise.then(()=>{if(current()&&own===attempt)$('audio-retry').hidden=true;}).catch(e=>{if(current()&&own===attempt){clearTimeout(audioWatchdog);$('audio-retry').textContent=e.name==='NotAllowedError'?'点一下，听朋友说话':'声音还没来，点一下再听';$('audio-retry').hidden=false;}});return promise;};
+  audio.onended=()=>{if(!current())return;clearTimeout(audioWatchdog);world.level=0;world.speaker=null;resolveAudio=null;resolve(true);};
+  audio.ontimeupdate=()=>{if(current()&&audio.currentTime>lastTime+.05){lastTime=audio.currentTime;arm();}};
+  audio.onerror=showRetry;afterRetry=()=>launch(true);launch();
+ });
+}
 $('audio-retry').onclick=async()=>{try{await afterRetry?.();$('audio-retry').hidden=true;}catch{notice('请检查网络后再试一下。');}};
 function ensureWorld(){if(world)return;world=new PilotWorld($('world'),pick);world.onFrame=()=>{if(cue&&!audio.paused&&audio.currentTime>=cue.introDuration){const n=Math.floor(audio.currentTime/.04);world.level=cue.envelope[n]||0;}else world.level=0;$('help').disabled=paused||locked;$('listen').disabled=paused||(locked&&!['talk','feedback'].includes(phase));};}
 function lessonText(e){return e.bonus?'自愿益智彩蛋｜公平分与分组 · 非本课要求':`${e.subject}｜${e.lesson} · 第${e.pages}页${e.id==='math'?'选练':''}`;}

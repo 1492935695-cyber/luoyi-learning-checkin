@@ -1,6 +1,6 @@
 import * as T from './vendor/three.module.js';
 import {GLTFLoader} from './vendor/loaders/GLTFLoader.js';
-import {PEOPLE} from './pilot-data.js?v=discovery1';
+import {PEOPLE} from './pilot-data.js?v=discovery2';
 
 // All interactions take place in the story world. A target represents one complete action.
 export class PilotWorld {
