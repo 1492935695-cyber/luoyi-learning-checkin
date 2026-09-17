@@ -1,11 +1,12 @@
-import {PILOTS,PEOPLE,PILOT_VERSION,EXTRA_SPEECH} from './pilot-data.js?v=discovery2';
-import {PilotWorld} from './pilot-world.js?v=discovery2';
+import {PILOTS,PEOPLE,PILOT_VERSION,EXTRA_SPEECH} from './pilot-data.js?v=mobile1';
+import {PilotWorld} from './pilot-world.js?v=mobile1';
+import {LOAD_VERSION,MODELS,loadBytes} from './pilot-loading.js?v=mobile1';
 const $=id=>document.getElementById(id),audio=$('voice'),KEY='luoyi-pilots-v1',py={天:'tiān',地:'dì',人:'rén',我:'wǒ',你:'nǐ',他:'tā'};
 const responses=Object.fromEntries(EXTRA_SPEECH.map(x=>[x.id,x])),findWords=['天','地','人','我','你','他'],readWords=['天','地','人','你','我','他'];
 const blank=()=>({version:1,...Object.fromEntries(Object.keys(PILOTS).map(k=>[k,{index:0,done:false,events:[]}])),oral:'未观察',note:''});
 let save;try{const d=JSON.parse(localStorage.getItem(KEY));if(d.version!==1||!['math','chinese'].every(k=>Number.isInteger(d[k]?.index)&&d[k].index>=0&&d[k].index<PILOTS[k].beats.length&&Array.isArray(d[k].events)&&d[k].events.length<=1500))throw Error();d.math_bonus||={index:0,done:false,events:[]};save=d;}catch{save=blank();}
 if(save.contentVersion!==PILOT_VERSION){for(const s of ['math','chinese']){const oldId=(s==='math'?'m':'c')+String(save[s].index+1).padStart(2,'0');const found=PILOTS[s].beats.findIndex(b=>b.id===oldId);save[s].index=Math.max(0,found);}save.contentVersion=PILOT_VERSION;}
-let world,manifest,ep,index=0,phase='home',task,step=0,token=0,locked=false,paused=false,cue=null,resolveAudio,afterRetry,loadingSubject,noticeTimer,pendingAdvance=false,audioWatchdog;
+let world,manifest,ep,index=0,phase='home',task,step=0,token=0,locked=false,paused=false,cue=null,resolveAudio,afterRetry,loadingSubject,noticeTimer,pendingAdvance=false,audioWatchdog,loadController;
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(save));}catch{notice('浏览器未能保存，请在家长手记保存报告。');}}
 function event(kind,more={}){if(!ep)return;save[ep.id].events.push({time:new Date().toISOString(),version:PILOT_VERSION,beat:ep.beats[index]?.id,kind,...more});save[ep.id].events=save[ep.id].events.slice(-1500);persist();}
 function notice(s){$('notice').textContent=s;$('notice').classList.add('show');clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>$('notice').classList.remove('show'),2200);}
@@ -26,7 +27,23 @@ function play(id){
 $('audio-retry').onclick=async()=>{try{await afterRetry?.();$('audio-retry').hidden=true;}catch{notice('请检查网络后再试一下。');}};
 function ensureWorld(){if(world)return;world=new PilotWorld($('world'),pick);world.onFrame=()=>{if(cue&&!audio.paused&&audio.currentTime>=cue.introDuration){const n=Math.floor(audio.currentTime/.04);world.level=cue.envelope[n]||0;}else world.level=0;$('help').disabled=paused||locked;$('listen').disabled=paused||(locked&&!['talk','feedback'].includes(phase));};}
 function lessonText(e){return e.bonus?'自愿益智彩蛋｜公平分与分组 · 非本课要求':`${e.subject}｜${e.lesson} · 第${e.pages}页${e.id==='math'?'选练':''}`;}
-async function start(subject){const mine=++token;pendingAdvance=false;loadingSubject=subject;phase='loading';$('loading').hidden=false;$('loading-message').textContent='朋友正在走进画面…';$('retry-load').hidden=true;$('home').hidden=true;if($('finish').open)$('finish').close();try{ensureWorld();world.active=true;world.paused=false;await Promise.all([world.load(PILOTS[subject]),manifest?Promise.resolve():fetch('assets/pilot/voices.json?v='+PILOT_VERSION).then(r=>{if(!r.ok)throw Error('voices');return r.json();}).then(d=>manifest=d)]);if(mine!==token)return;ep=PILOTS[subject];index=save[subject].done?0:save[subject].index;world.build(ep);$('loading').hidden=true;$('hud').hidden=false;$('pause').hidden=false;$('lesson').textContent=lessonText(ep);event('进入故事');show();}catch(e){console.error(e);if(mine!==token)return;$('loading-message').textContent='画面还没加载好，联网后再试一下。';$('retry-load').hidden=false;}}
+async function start(subject){
+ loadController?.abort();stopAudio();const controller=new AbortController();loadController=controller;const {signal}=controller,mine=++token;
+ pendingAdvance=false;loadingSubject=subject;phase='loading';$('loading').hidden=false;$('loading').classList.remove('load-failed');$('loading-message').textContent='正在准备珞伊的故事…';$('loading-detail').textContent='第一次打开需要下载人物，准备好后会自动开始。';$('loading-progress').value=0;$('retry-load').hidden=true;$('home').hidden=true;$('hud').hidden=true;$('pause').hidden=true;if($('finish').open)$('finish').close();
+ const e=PILOTS[subject],progress=new Map(),total=e.characters.reduce((n,k)=>n+MODELS[k].bytes,0);
+ const update=(key,p)=>{if(mine!==token||signal.aborted)return;progress.set(key,{...progress.get(key),...p});const received=e.characters.reduce((n,k)=>n+Math.min(progress.get(k)?.loaded||0,MODELS[k].bytes),0),ready=e.characters.filter(k=>progress.get(k)?.ready).length;
+  $('loading-progress').value=Math.min(98,received/total*95+ready);
+  $('loading-message').textContent=p.attempt>1?'连接有点慢，正在重新接上…':ready===e.characters.length?'人物到了，正在布置场景…':'朋友正在走进画面…';
+  $('loading-detail').textContent=`人物 ${ready} / ${e.characters.length} · 已收到 ${(received/1e6).toFixed(1)} / ${(total/1e6).toFixed(1)} MB`;
+ };
+ try{
+  ensureWorld();world.active=false;world.paused=true;
+  await Promise.all([world.load(e,{signal,onProgress:update}),manifest?Promise.resolve():loadBytes('assets/pilot/voices.json?v='+LOAD_VERSION,{signal}).then(b=>{const d=JSON.parse(new TextDecoder().decode(b));if(!d.lines)throw Error('Invalid voices');if(mine===token&&!signal.aborted)manifest=d;})]);
+  if(mine!==token||signal.aborted)return;ep=e;index=save[subject].done?0:save[subject].index;world.build(ep);world.active=true;world.paused=false;$('loading-progress').value=100;$('loading').hidden=true;$('hud').hidden=false;$('pause').hidden=false;$('lesson').textContent=lessonText(ep);loadController=null;event('进入故事');show();
+ }catch(error){
+  controller.abort();if(mine!==token)return;console.warn('Story preparation stopped:',error.message);$('loading').classList.add('load-failed');$('loading-message').textContent='这次没能接上，点一下再试。';$('loading-detail').textContent='已准备好的人物会保留，不用一直等。也可以先回到剧场。';$('retry-load').hidden=false;
+ }
+}
 function ruby(el,text,phonetic){el.replaceChildren();const r=document.createElement('ruby');r.append(document.createTextNode(text));const rt=document.createElement('rt');rt.textContent=phonetic;r.append(rt);el.append(r);}
 async function waitActive(ms,mine=token){while(ms>0&&mine===token){await new Promise(r=>setTimeout(r,80));if(!paused)ms-=80;}}
 function hideFeedback(){$('feedback').hidden=true;$('pilot-app').classList.remove('has-feedback');}
@@ -82,7 +99,7 @@ async function pick(id){if(phase!=='task'||paused||locked||!task)return;locked=t
 async function help(){if(phase!=='task'||paused||locked)return;const mine=token;locked=true;event('使用提示');world.hint();let id=['pack','supply','hidden','share','boxes','clue'].includes(task.kind)?'hint-'+task.kind:task.kind==='bridge'?'hint-bridge':task.kind==='mail'?'hint-mail':task.kind==='seals'?'find-'+findWords.indexOf(task.goal[step]):['pronoun','receive'].includes(task.kind)?'hint-pronoun':task.kind==='return'?'hint-return':task.kind==='add'?'hint-add':'hint-load';await play(id);if(mine===token)locked=false;}
 function pause(){if(!ep||phase==='home'||phase==='loading'||paused)return;paused=true;world.paused=true;audio.pause();$('rest').showModal();}
 function resume(){paused=false;world.paused=false;$('rest').close();if(pendingAdvance){next();return;}if(cue&&audio.currentTime<audio.duration-.08){audio.play().catch(()=>{$('audio-retry').hidden=false;});}else if(phase==='talk'){next();}}
-function home(){++token;stopAudio();hideFeedback();task=null;phase='home';paused=false;locked=false;if(world){world.paused=true;world.active=false;}$('home').hidden=false;$('hud').hidden=true;$('loading').hidden=true;$('pause').hidden=true;$('lesson').textContent='选择今天的故事';$('pilot-app').classList.remove('task');for(const id of ['rest','finish'])if($(id).open)$(id).close();}
+function home(){++token;loadController?.abort();loadController=null;stopAudio();hideFeedback();task=null;phase='home';paused=false;locked=false;if(world){world.paused=true;world.active=false;}$('home').hidden=false;$('hud').hidden=true;$('loading').hidden=true;$('pause').hidden=true;$('lesson').textContent='选择今天的故事';$('pilot-app').classList.remove('task');for(const id of ['rest','finish'])if($(id).open)$(id).close();}
 async function completeEpisode(){phase='finish';task=null;instructions(null);save[ep.id].done=true;event('完成故事');$('finish-title').textContent=ep.id==='math'?'珞伊，小灯车出发啦！':ep.bonus?'珞伊，点心准备好啦！':'珞伊，信都送到啦！';$('finish-text').textContent=ep.oral;$('finish-bonus').hidden=ep.id!=='math';$('finish-words').hidden=ep.id!=='chinese';$('finish-words').replaceChildren();if(ep.id==='chinese')for(const w of readWords){const item=document.createElement('span');ruby(item,w,py[w]);$('finish-words').append(item);}$('finish').showModal();await play('done-'+ep.id);}
 function makeReport(){
  const lines=['珞伊的故事手记',new Date().toLocaleDateString('zh-CN'),''];

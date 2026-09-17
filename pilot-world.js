@@ -1,6 +1,8 @@
 import * as T from './vendor/three.module.js';
 import {GLTFLoader} from './vendor/loaders/GLTFLoader.js';
-import {PEOPLE} from './pilot-data.js?v=discovery2';
+import {PEOPLE} from './pilot-data.js?v=mobile1';
+import {LOAD_VERSION,MODELS,loadBytes,withDeadline,abortError} from './pilot-loading.js?v=mobile1';
+import {gunzipSync} from './vendor/fflate.js';
 
 // All interactions take place in the story world. A target represents one complete action.
 export class PilotWorld {
@@ -19,7 +21,30 @@ export class PilotWorld {
  ell(pos,size,c,g=this.root){const m=this.mesh(new T.SphereGeometry(1,24,16),c,g);m.position.set(...pos);m.scale.set(...size);return m;}
  tube(points,r,c,g=this.root){return this.mesh(new T.TubeGeometry(new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p))),20,r,8,false),c,g);}
  group(pos,g=this.root){const o=new T.Group();o.position.set(...pos);g.add(o);return o;}
- async load(ep){const loader=new GLTFLoader();for(const key of ep.characters){if(!this.loads.has(key)){const file='assets/pilot/'+PEOPLE[key].file;this.loads.set(key,loader.loadAsync(file).then(d=>this.cast.set(key,d.scene)).catch(e=>{this.loads.delete(key);throw e;}));}}await Promise.all(ep.characters.map(k=>this.loads.get(k)));}
+ async load(ep,{signal,onProgress=()=>{}}={}){
+  const loader=new GLTFLoader();
+  // iOS WeChat omits "Safari" from its UA; use the same image path as Safari.
+  if(/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))loader.register(parser=>{
+   parser.textureLoader=new T.TextureLoader(parser.options.manager).setCrossOrigin(parser.options.crossOrigin).setRequestHeader(parser.options.requestHeader);
+   return{name:'PILOT_IOS_TEXTURES'};
+  });
+  const queue=ep.characters.filter(key=>{if(this.cast.has(key)){onProgress(key,{loaded:MODELS[key].bytes,ready:true});return false;}return true;});
+  const worker=async()=>{while(queue.length){
+   if(signal?.aborted)throw abortError();const key=queue.shift(),spec=MODELS[key];
+   const packed=await loadBytes('assets/pilot/mobile/'+spec.file+'?v='+LOAD_VERSION,{signal,onProgress:p=>onProgress(key,p)});
+   if(signal?.aborted)throw abortError();onProgress(key,{loaded:spec.bytes,decoding:true});
+   // Some proxies decode .gz themselves. Accept either GLB or gzip bytes.
+   let bytes=new Uint8Array(packed);if(bytes[0]===31&&bytes[1]===139)bytes=gunzipSync(bytes);
+   if(bytes[0]!==103||bytes[1]!==108||bytes[2]!==84||bytes[3]!==70)throw Error('Invalid character data');
+   const parsed=loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'assets/pilot/mobile/');
+   let expired=false;parsed.then(d=>{if(expired)this.disposeModel(d.scene);},()=>{});
+   let d;try{d=await withDeadline(parsed,signal);}catch(e){expired=true;throw e;}
+   if(signal?.aborted){this.disposeModel(d.scene);throw abortError();}
+   this.cast.set(key,d.scene);onProgress(key,{loaded:spec.bytes,ready:true});
+  }};
+  await Promise.all([worker(),worker()]);
+ }
+ disposeModel(scene){const textures=new Set();scene.traverse(o=>{if(!o.isMesh)return;o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){for(const v of Object.values(m))if(v?.isTexture)textures.add(v);m.dispose();}});for(const texture of textures){texture.source?.data?.close?.();texture.dispose();}}
  disposeGroup(g){g.traverse(o=>{if(o.isMesh&&!o.userData.shared){o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){m.map?.dispose();m.dispose();}}});g.clear();}
  build(ep){this.disposeGroup(this.root);this.clearTask();this.ep=ep;this.actors.clear();this.floaters=[];this.moves=[];this.departing=false;
   const ground=this.mesh(new T.PlaneGeometry(70,70),'#78955c');ground.rotation.x=-Math.PI/2;ground.position.y=-.04;
