@@ -1,5 +1,5 @@
 import {PILOTS,PEOPLE,PILOT_VERSION} from './pilot-data.js?v=pilot1';
-import {PilotWorld} from './pilot-world.js?v=pilot1';
+import {PilotWorld} from './pilot-world.js?v=pilot2';
 const $=id=>document.getElementById(id),audio=$('voice'),KEY='luoyi-pilots-v1',py={天:'tiān',地:'dì',人:'rén',我:'wǒ',你:'nǐ',他:'tā'};
 const blank=()=>({version:1,math:{index:0,done:false,events:[]},chinese:{index:0,done:false,events:[]},oral:'未观察',note:''});
 let save;try{const d=JSON.parse(localStorage.getItem(KEY));if(d.version!==1||!['math','chinese'].every(k=>Number.isInteger(d[k]?.index)&&d[k].index>=0&&d[k].index<PILOTS[k].beats.length&&Array.isArray(d[k].events)&&d[k].events.length<=1500))throw Error();save=d;}catch{save=blank();}
