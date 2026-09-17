@@ -87,7 +87,7 @@ export class PilotWorld {
    for(const [k,a]of this.actors)a.g.visible=k==='friend';this.cart.visible=false;this.actors.get('friend').g.position.set(0,0,-.55);const l=this.text('你','nǐ',.8,.9);l.position.set(0,.95,.75);this.target('letter',l,[0,0,0],[.9,1,.2]);this.cameraTo([0,1.4,3.7],[0,1.05,0],true);
   }else if(b.kind==='seals'){
    for(const a of this.actors.values())a.g.visible=false;this.cart.visible=false;this.lampRoot.visible=false;
-   const order=step%2?['人','地','天']:['地','天','人'];for(const [i,w]of order.entries()){const l=this.text(w,{天:'tiān',地:'dì',人:'rén'}[w],.76,.84);l.position.set((i-1)*.95,.95,.1);this.target(w,l,[0,0,0],[.8,.9,.25]);const base=this.mesh(new T.CylinderGeometry(.36,.40,.20,32),'#aa7748',this.taskRoot);base.position.set((i-1)*.95,.40,.1);}this.cameraTo([0,1.6,5.0],[0,.95,0],true);
+   const order=step%2?['人','地','天']:['地','天','人'];for(const [i,w]of order.entries()){const l=this.text(w,{天:'tiān',地:'dì',人:'rén'}[w],.76,.84);l.position.set((i-1)*.95,.95,.1);this.target(w,l,[0,0,0],[.8,.9,.25]);const base=this.mesh(new T.CylinderGeometry(.36,.40,.20,32),'#aa7748',this.taskRoot);base.position.set((i-1)*.95,.40,.1);}this.cameraTo([0,1.6,6.8],[0,.95,0],true);
   }
  }
  async collect(id,n,total=3){const g=this.targets.get(id);if(!g)return;this.targets.delete(id);g.userData.target=null;await this.move(g,[(n-1-(total-1)/2)*.30,.75,-.55],.65);this.lamps.push(g);}
