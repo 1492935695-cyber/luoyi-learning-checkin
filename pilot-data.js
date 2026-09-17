@@ -5,13 +5,15 @@ export const PEOPLE={
  li:{name:'李老师',voice:'zh-CN-XiaoxiaoNeural',gender:'Female',file:'teacher-li.glb',height:2.05},
  wang:{name:'王老师',voice:'zh-CN-YunjianNeural',gender:'Male',file:'teacher-wang.glb',height:2.10},
  friend:{name:'李欣袆',voice:'zh-TW-HsiaoChenNeural',gender:'Female',file:'../cinema/actor-live-friend.glb',height:1.50},
+ yang:{name:'杨诗然',voice:'zh-TW-HsiaoYuNeural',gender:'Female',file:'../cinema/actor-live-girl.glb',height:1.53},
+ tang:{name:'汤葭荟',voice:'zh-CN-XiaoyiNeural',pitch:'+12Hz',gender:'Female',file:'../cinema/actor-live-tang.glb',height:1.43},
  brother:{name:'乔治哥哥',voice:'zh-CN-YunxiNeural',gender:'Male',file:'../cinema/actor-live-brother.glb',height:1.77},
  squirrel:{name:'松鼠阿栗',voice:'zh-CN-YunxiaNeural',gender:'Male'}
 };
 const line=(id,who,text,shot,action)=>({id,who,text,shot,action});
 const task=(id,kind,title,py,who,text,goal,stage='independent')=>({id,kind,title,py,who,text,goal,stage,shot:'action'});
 export const PILOTS={
- math:{id:'math',title:'小灯车的长队魔法',subject:'数学',lesson:'1～5的认识',pages:'12—16',color:'#dd9850',characters:['wang','friend','brother'],intro:'一盏灯，真的会变成两盏吗？',beats:[
+ math:{id:'math',title:'小灯车的长队魔法',subject:'数学',lesson:'1～5的认识',pages:'12—16',color:'#dd9850',characters:['wang','yang','tang'],intro:'一盏灯，真的会变成两盏吗？',beats:[
  line('m01','luoyi','咦，小灯车怎么不走了？阿栗，你把灯藏到哪里去了？','wide','arrival'),
  line('m02','squirrel','没有藏！我把三盏排得长长的。嘿嘿，这下是不是变成五盏啦？','squirrel','spread-demo'),
  line('m03','wang','珞伊，我们来试一试！先给小车装三盏灯，再看看阿栗的魔法。','wang','point'),
@@ -19,10 +21,10 @@ export const PILOTS={
  line('m05','squirrel','看我的长队魔法！一，二……咦，怎么还是你刚才装的那些？','wide','spread'),
  task('m06','return','把灯叫回来','bǎ dēng jiào huí lái','wang','点一下跑开的灯，让它回到自己的车位。',3,'guided'),
  line('m07','luoyi','原来只是位置变了！阿栗，灯可不会自己变多哦。','wide','glow'),
- line('m08','friend','珞伊，又来了一只小鸭。它也想带一盏灯去看演出！','friend','duck-arrive'),
- task('m09','supply','给新伙伴备灯','gěi xīn huǒ bàn bèi dēng','friend','小车有三盏灯，现在来了四只小鸭。每只带一盏。珞伊，点一组新灯，让每只都有。',4),
- line('m10','brother','还有一只小鸭追来啦！它的小帽子都跑歪了。','brother','duck-more'),
- task('m11','supply','让每只都有灯','ràng měi zhī dōu yǒu dēng','brother','这回是五只小鸭，小车有四盏灯。你来选一组，看看怎样刚好够。',5),
+ line('m08','yang','珞伊，又来了一只小鸭。它也想带一盏灯去看演出！','yang','duck-arrive'),
+ task('m09','supply','给新伙伴备灯','gěi xīn huǒ bàn bèi dēng','yang','小车有三盏灯，现在来了四只小鸭。每只带一盏。珞伊，点一组新灯，让每只都有。',4),
+ line('m10','tang','还有一只小鸭追来啦！它的小帽子都跑歪了。','tang','duck-more'),
+ task('m11','supply','让每只都有灯','ràng měi zhī dōu yǒu dēng','tang','这回是五只小鸭，小车有四盏灯。你来选一组，看看怎样刚好够。',5),
  line('m12','wang','三盏添一盏是四盏，四盏再添一盏是五盏。真的添了灯，数量才增加。','wang','point'),
  line('m13','squirrel','报告珞伊导演！小桥还有空灯座。可是，这回没有人告诉我拿几盏。','bridge','bridge-reveal'),
  task('m14','bridge','给灯座配灯','gěi dēng zuò pèi dēng','wang','看，上面这些蓝绿色的小台子就是灯座。一个灯座放一盏灯，点下面刚好够用的一组。',4),
@@ -52,15 +54,16 @@ export const PILOTS={
  line('c16','luoyi','名字找对，信就不会迷路啦。阿栗，这回你可以放心送信了！','wide','depart'),
  line('c17','squirrel','收到！寄给天的信，我可不再请蚯蚓代收啦！','journey','celebrate')
  ],coverage:'天、地、人、你、我、他六字有情境接触和听音找字，另有称呼变化、三条生活线索的意思推断。字卡带拼音，点击完成不等于独立认读；线索推断不等于识字。朗读另由家长观察，本课不强加写字。',oral:'珞伊，挑两个字读给家人听吧。也可以先歇一歇，下次再读。'},
- math_bonus:{id:'math_bonus',title:'阿栗的点心野餐',subject:'数学拓展',lesson:'公平分与等量分组',pages:'',characters:['wang','friend','brother'],bonus:true,beats:[
+ math_bonus:{id:'math_bonus',title:'阿栗的点心野餐',subject:'数学拓展',lesson:'公平分与等量分组',pages:'',characters:['wang','yang','tang'],bonus:true,beats:[
  line('b01','squirrel','演出前开个小野餐！我有四块点心，两只小鸭都想吃。可别让一只的盘子堆成山呀！','wide','picnic'),
  task('b02','share','给两位伙伴公平分','gěi liǎng wèi huǒ bàn gōng píng fēn','wang','四块点心，两只小鸭一样多。点盘子放一块。分完后，再点盘子能拿回一块。分好了就点铃，请它们开吃。',2),
- line('b03','friend','原来两块和两块合起来，正好是四块！珞伊，它们想给朋友打包。','friend','smile'),
+ line('b03','yang','原来两块和两块合起来，正好是四块！珞伊，它们想给朋友打包。','yang','smile'),
  task('b04','boxes','每盒装两块','měi hé zhuāng liǎng kuài','wang','还是这四块点心，每个盒子装两块。点一组盒子，让四块都装下，每盒也都装满。',2),
  line('b05','squirrel','分点心和装盒子，都要把一份一份看清楚。珞伊，谢谢你！我们去野餐啦！','journey','celebrate')
  ],coverage:'自愿拓展，不是《1～5的认识》本课达标要求。体验4分成同样多的两份、每份2；以及4个按每组2个可装2组。为加减、乘除意义提供直观经验，不考乘除口诀、符号或声称掌握运算。',oral:'珞伊，点心装好啦。故事先收好，去活动一下吧。'}
 };
 export const EXTRA_SPEECH=[
+ {id:'good-seals',who:'li',text:'找齐啦，珞伊！六枚印章是天、地、人、你、我、他。',heading:'六枚印章找齐啦！',learn:'天 地 人 你 我 他',py:'tiān dì rén nǐ wǒ tā'},
  ...['天','地','人','你','我','他'].map((w,i)=>({id:'word-'+i,who:'li',text:w})),
  ...['天','地','人','我','你','他'].map((w,i)=>({id:'find-'+i,who:'li',text:'点一下写着'+w+'的印章。'})),
  {id:'hint-load',who:'wang',text:'看前面亮着边框的灯，点一盏，它就会到小车上。我们一盏一盏来。'},

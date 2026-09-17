@@ -1,8 +1,10 @@
 // Bounded, cancellable first-load requests for Safari and embedded browsers.
 export const LOAD_VERSION='mobile2';
+export const SPEECH_VERSION='flow1';
 export const MODELS={
  li:{file:'li.glb.gz',bytes:3264427},wang:{file:'wang.glb.gz',bytes:1834292},
- friend:{file:'friend.glb.gz',bytes:3242503},brother:{file:'brother.glb.gz',bytes:3239556}
+ friend:{file:'friend.glb.gz',bytes:3242503},brother:{file:'brother.glb.gz',bytes:3239556},
+ yang:{file:'yang.glb.gz',bytes:3303746},tang:{file:'tang.glb.gz',bytes:3256174}
 };
 export const abortError=()=>new DOMException('Loading cancelled','AbortError');
 

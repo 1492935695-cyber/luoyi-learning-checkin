@@ -1,24 +1,25 @@
-import {PILOTS,PEOPLE,PILOT_VERSION,EXTRA_SPEECH} from './pilot-data.js?v=mobile2';
-import {PilotWorld} from './pilot-world.js?v=mobile2';
-import {LOAD_VERSION,MODELS,loadBytes} from './pilot-loading.js?v=mobile2';
+import {PILOTS,PEOPLE,PILOT_VERSION,EXTRA_SPEECH} from './pilot-data.js?v=flow1';
+import {PilotWorld} from './pilot-world.js?v=flow1';
+import {SPEECH_VERSION,MODELS,loadBytes} from './pilot-loading.js?v=flow1';
 const $=id=>document.getElementById(id),audio=$('voice'),KEY='luoyi-pilots-v1',py={天:'tiān',地:'dì',人:'rén',我:'wǒ',你:'nǐ',他:'tā'};
 const responses=Object.fromEntries(EXTRA_SPEECH.map(x=>[x.id,x])),findWords=['天','地','人','我','你','他'],readWords=['天','地','人','你','我','他'];
 const blank=()=>({version:1,...Object.fromEntries(Object.keys(PILOTS).map(k=>[k,{index:0,done:false,events:[]}])),oral:'未观察',note:''});
 let save;try{const d=JSON.parse(localStorage.getItem(KEY));if(d.version!==1||!['math','chinese'].every(k=>Number.isInteger(d[k]?.index)&&d[k].index>=0&&d[k].index<PILOTS[k].beats.length&&Array.isArray(d[k].events)&&d[k].events.length<=1500))throw Error();d.math_bonus||={index:0,done:false,events:[]};save=d;}catch{save=blank();}
 if(save.contentVersion!==PILOT_VERSION){for(const s of ['math','chinese']){const oldId=(s==='math'?'m':'c')+String(save[s].index+1).padStart(2,'0');const found=PILOTS[s].beats.findIndex(b=>b.id===oldId);save[s].index=Math.max(0,found);}save.contentVersion=PILOT_VERSION;}
 let world,manifest,ep,index=0,phase='home',task,step=0,token=0,locked=false,paused=false,cue=null,resolveAudio,afterRetry,loadingSubject,noticeTimer,pendingAdvance=false,audioWatchdog,loadController;
+let lastVoiceRole=null,cueStart=0,chimeContext;
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(save));}catch{notice('浏览器未能保存，请在家长手记保存报告。');}}
 function event(kind,more={}){if(!ep)return;save[ep.id].events.push({time:new Date().toISOString(),version:PILOT_VERSION,beat:ep.beats[index]?.id,kind,...more});save[ep.id].events=save[ep.id].events.slice(-1500);persist();}
 function notice(s){$('notice').textContent=s;$('notice').classList.add('show');clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>$('notice').classList.remove('show'),2200);}
-function stopAudio(){clearTimeout(audioWatchdog);audio.onended=audio.onerror=audio.ontimeupdate=null;audio.pause();resolveAudio?.(false);resolveAudio=null;afterRetry=null;cue=null;$('audio-retry').hidden=true;if(world){world.speaker=null;world.level=0;}}
-function play(id){
- stopAudio();const c=manifest.lines[id];if(!c){notice('这一句声音还没准备好，请稍后重试。');return Promise.resolve(false);}cue=c;audio.src='assets/pilot/'+c.file+'?v='+PILOT_VERSION;world.speaker=c.who;world.level=0;
+function stopAudio(){clearTimeout(audioWatchdog);audio.onended=audio.onerror=audio.ontimeupdate=audio.onloadedmetadata=null;audio.pause();resolveAudio?.(false);resolveAudio=null;afterRetry=null;cue=null;$('audio-retry').hidden=true;if(world){world.speaker=null;world.level=0;}}
+function play(id,{short=false}={}){
+ stopAudio();const c=manifest.lines[id];if(!c){notice('这一句声音还没准备好，请稍后重试。');return Promise.resolve(false);}cue=c;cueStart=short||lastVoiceRole===c.who?c.introDuration:0;audio.src='assets/pilot/'+c.file+'?v='+SPEECH_VERSION;world.speaker=c.who;world.level=0;
  return new Promise(resolve=>{
   resolveAudio=resolve;let autoRetried=false,attempt=0,lastTime=-1;
   const current=()=>cue===c&&resolveAudio===resolve;
   const showRetry=()=>{if(!current())return;clearTimeout(audioWatchdog);audio.pause();$('audio-retry').textContent='声音还没来，点一下再听';$('audio-retry').hidden=false;};
   const arm=()=>{clearTimeout(audioWatchdog);audioWatchdog=setTimeout(()=>{if(!current())return;if(paused){arm();return;}if(autoRetried)showRetry();else{autoRetried=true;launch(true);}},12000);};
-  const launch=(reload=false)=>{if(!current())return Promise.resolve();const own=++attempt;$('audio-retry').hidden=true;if(reload)audio.load();lastTime=audio.currentTime;arm();const promise=audio.play();promise.then(()=>{if(current()&&own===attempt)$('audio-retry').hidden=true;}).catch(e=>{if(current()&&own===attempt){clearTimeout(audioWatchdog);$('audio-retry').textContent=e.name==='NotAllowedError'?'点一下，听朋友说话':'声音还没来，点一下再听';$('audio-retry').hidden=false;}});return promise;};
+  const launch=(reload=false)=>{if(!current())return Promise.resolve();const own=++attempt,startAt=reload?Math.max(cueStart,audio.currentTime||0):cueStart;$('audio-retry').hidden=true;audio.onloadedmetadata=()=>{if(current()&&own===attempt)audio.currentTime=startAt;};if(reload)audio.load();try{audio.currentTime=startAt;}catch{}lastTime=startAt;arm();const promise=audio.play();promise.then(()=>{if(current()&&own===attempt){lastVoiceRole=c.who;$('audio-retry').hidden=true;}}).catch(e=>{if(current()&&own===attempt){clearTimeout(audioWatchdog);$('audio-retry').textContent=e.name==='NotAllowedError'?'点一下，听朋友说话':'声音还没来，点一下再听';$('audio-retry').hidden=false;}});return promise;};
   audio.onended=()=>{if(!current())return;clearTimeout(audioWatchdog);world.level=0;world.speaker=null;resolveAudio=null;resolve(true);};
   audio.ontimeupdate=()=>{if(current()&&audio.currentTime>lastTime+.05){lastTime=audio.currentTime;arm();}};
   audio.onerror=showRetry;afterRetry=()=>launch(true);launch();
@@ -28,7 +29,7 @@ $('audio-retry').onclick=async()=>{try{await afterRetry?.();$('audio-retry').hid
 function ensureWorld(){if(world)return;world=new PilotWorld($('world'),pick);world.onFrame=()=>{if(cue&&!audio.paused&&audio.currentTime>=cue.introDuration){const n=Math.floor(audio.currentTime/.04);world.level=cue.envelope[n]||0;}else world.level=0;$('help').disabled=paused||locked;$('listen').disabled=paused||(locked&&!['talk','feedback'].includes(phase));};}
 function lessonText(e){return e.bonus?'自愿益智彩蛋｜公平分与分组 · 非本课要求':`${e.subject}｜${e.lesson} · 第${e.pages}页${e.id==='math'?'选练':''}`;}
 async function start(subject){
- loadController?.abort();stopAudio();const controller=new AbortController();loadController=controller;const {signal}=controller,mine=++token;
+ loadController?.abort();stopAudio();lastVoiceRole=null;const controller=new AbortController();loadController=controller;const {signal}=controller,mine=++token;
  pendingAdvance=false;loadingSubject=subject;phase='loading';$('loading').hidden=false;$('loading').classList.remove('load-failed');$('loading-message').textContent='正在准备珞伊的故事…';$('loading-detail').textContent='第一次打开需要下载人物，准备好后会自动开始。';$('loading-progress').value=0;$('retry-load').hidden=true;$('home').hidden=true;$('hud').hidden=true;$('pause').hidden=true;if($('finish').open)$('finish').close();
  const e=PILOTS[subject],progress=new Map(),total=e.characters.reduce((n,k)=>n+MODELS[k].bytes,0);
  const update=(key,p)=>{if(mine!==token||signal.aborted)return;progress.set(key,{...progress.get(key),...p});const received=e.characters.reduce((n,k)=>n+Math.min(progress.get(k)?.loaded||0,MODELS[k].bytes),0),ready=e.characters.filter(k=>progress.get(k)?.ready).length;
@@ -38,7 +39,7 @@ async function start(subject){
  };
  try{
   ensureWorld();world.active=false;world.paused=true;
-  await Promise.all([world.load(e,{signal,onProgress:update}),manifest?Promise.resolve():loadBytes('assets/pilot/voices.json?v='+LOAD_VERSION,{signal}).then(b=>{const d=JSON.parse(new TextDecoder().decode(b));if(!d.lines)throw Error('Invalid voices');if(mine===token&&!signal.aborted)manifest=d;})]);
+  await Promise.all([world.load(e,{signal,onProgress:update}),manifest?Promise.resolve():loadBytes('assets/pilot/voices.json?v='+SPEECH_VERSION,{signal}).then(b=>{const d=JSON.parse(new TextDecoder().decode(b));if(!d.lines)throw Error('Invalid voices');if(mine===token&&!signal.aborted)manifest=d;})]);
   if(mine!==token||signal.aborted)return;ep=e;index=save[subject].done?0:save[subject].index;world.build(ep);world.active=true;world.paused=false;$('loading-progress').value=100;$('loading').hidden=true;$('hud').hidden=false;$('pause').hidden=false;$('lesson').textContent=lessonText(ep);loadController=null;event('进入故事');show();
  }catch(error){
   controller.abort();if(mine!==token)return;console.warn('Story preparation stopped:',error.message);$('loading').classList.add('load-failed');$('loading-message').textContent='这次没能接上，点一下再试。';$('loading-detail').textContent='已准备好的人物会保留，不用一直等。也可以先回到剧场。';$('retry-load').hidden=false;
@@ -47,22 +48,23 @@ async function start(subject){
 function ruby(el,text,phonetic){el.replaceChildren();const r=document.createElement('ruby');r.append(document.createTextNode(text));const rt=document.createElement('rt');rt.textContent=phonetic;r.append(rt);el.append(r);}
 async function waitActive(ms,mine=token){while(ms>0&&mine===token){await new Promise(r=>setTimeout(r,80));if(!paused)ms-=80;}}
 function hideFeedback(){$('feedback').hidden=true;$('pilot-app').classList.remove('has-feedback');}
-async function respond(id,mine=token){const r=responses[id];if(!r)return;phase='feedback';$('feedback').hidden=false;$('pilot-app').classList.add('has-feedback');$('feedback-speaker').textContent=PEOPLE[r.who].name+'说';$('feedback-title').textContent=r.heading||'珞伊，看看这里';ruby($('feedback-learning'),r.learn||'',r.py||'');$('feedback-text').textContent=r.text;$('feedback-quantity').hidden=!r.count;$('feedback-number').textContent=r.count||'';$('feedback-dots').replaceChildren();for(let i=0;i<(r.count||0);i++){const dot=document.createElement('i');$('feedback-dots').append(dot);}if(/^(good-|count-|return-)/.test(id))world.celebrate();const ok=await play(id);if(mine!==token||!ok)return;await waitActive(520,mine);if(mine===token)hideFeedback();}
+function quickFeedback(text,phonetic){ruby($('progress'),text,phonetic);$('progress').classList.add('live-progress');try{const Audio=window.AudioContext||window.webkitAudioContext;chimeContext||=new Audio();if(chimeContext.state==='suspended')chimeContext.resume().catch(()=>{});const o=chimeContext.createOscillator(),g=chimeContext.createGain(),t=chimeContext.currentTime;o.type='sine';o.frequency.setValueAtTime(740,t);o.frequency.exponentialRampToValueAtTime(980,t+.07);g.gain.setValueAtTime(.025,t);g.gain.exponentialRampToValueAtTime(.001,t+.10);o.connect(g);g.connect(chimeContext.destination);o.start(t);o.stop(t+.11);o.onended=()=>{o.disconnect();g.disconnect();};}catch{}}
+async function respond(id,mine=token){const r=responses[id];if(!r)return;phase='feedback';$('feedback').hidden=false;$('pilot-app').classList.add('has-feedback');$('feedback-speaker').textContent=PEOPLE[r.who].name+'说';$('feedback-title').textContent=r.heading||'珞伊，看看这里';ruby($('feedback-learning'),r.learn||'',r.py||'');$('feedback-text').textContent=r.text;$('feedback-quantity').hidden=!r.count;$('feedback-number').textContent=r.count||'';$('feedback-dots').replaceChildren();for(let i=0;i<(r.count||0);i++){const dot=document.createElement('i');$('feedback-dots').append(dot);}if(/^(good-|count-|return-)/.test(id))world.celebrate();const ok=await play(id);if(mine!==token||!ok)return;await waitActive(160,mine);if(mine===token)hideFeedback();}
 function instructions(b){$('instruction').hidden=!b;$('help').hidden=!b;$('pilot-app').dataset.kind=b?.kind||'';$('pilot-app').classList.toggle('task',!!b);if(!b){$('letter').hidden=true;return;}const r=$('instruction-ruby');r.querySelector('span').textContent=b.kind==='pronoun'?'点收信的人':b.kind==='receive'?'点一下，收好信':b.title;r.querySelector('rt').textContent=b.kind==='pronoun'?'diǎn shōu xìn de rén':b.kind==='receive'?'diǎn yí xià shōu hǎo xìn':b.py;const word=b.kind==='mail'?b.goal[step]:['pronoun','receive'].includes(b.kind)?b.title:null;$('letter').hidden=!word;if(word)ruby($('letter'),word,py[word]);}
-async function show(){const mine=++token;stopAudio();hideFeedback();paused=false;world.paused=false;locked=true;task=null;step=0;const b=ep.beats[index];save[ep.id].index=index;persist();phase='talk';$('lesson').textContent=b.lesson||lessonText(ep);$('progress').textContent=`${index+1} / ${ep.beats.length}`;$('speaker').textContent=PEOPLE[b.who].name+'说';$('dialogue').textContent=b.text;instructions(null);world.beat(b);
- if(b.kind){task=b;world.setup(b);instructions(b);$('pilot-app').classList.remove('task');}
+async function show(){const mine=++token;stopAudio();hideFeedback();paused=false;world.paused=false;locked=true;task=null;step=0;const b=ep.beats[index];save[ep.id].index=index;persist();phase='talk';$('lesson').textContent=b.lesson||lessonText(ep);$('progress').classList.remove('live-progress');$('progress').textContent=`${index+1} / ${ep.beats.length}`;$('speaker').textContent=PEOPLE[b.who].name+'说';$('dialogue').textContent=b.text;instructions(null);world.beat(b);
+ if(b.kind){task=b;world.setup(b);instructions(b);if(!['seals','clue','pronoun','receive'].includes(b.kind)){phase='task';locked=false;}else $('pilot-app').classList.remove('task');}
  const ok=await play(b.id);if(mine!==token||!ok)return;
  if(b.kind){phase='task';locked=false;$('pilot-app').classList.add('task');if(['seals','clue'].includes(b.kind))await sealPrompt(mine);}else{await new Promise(r=>setTimeout(r,240));if(mine===token&&!paused)next();}
 }
-async function sealPrompt(mine=token){locked=true;const target=task.goal[step];await play(task.kind==='clue'?'clue-'+step:'find-'+findWords.indexOf(target));if(mine===token)locked=false;}
+function sealPrompt(mine=token){if(mine!==token)return;locked=false;const target=task.goal[step];return play(task.kind==='clue'?'clue-'+step:'word-'+readWords.indexOf(target),{short:true});}
 function next(){if(paused){pendingAdvance=true;return;}pendingAdvance=false;if(index+1>=ep.beats.length){completeEpisode();return;}index++;show();}
 function countedTask(){return ['load','return','add'].includes(task?.kind);}
-async function pick(id){if(phase!=='task'||paused||locked||!task)return;locked=true;const mine=token,b=task;let correct=false;
+async function pick(id){if(phase!=='task'||paused||locked||!task||!world.targets.has(id))return;stopAudio();hideFeedback();locked=true;const mine=token,b=task;let correct=false;
  if(['pack','share'].includes(b.kind)){
   if(id!=='bell'){
-   const moved=b.kind==='pack'?await world.toggleLamp(id):await world.shareCake(id);if(mine!==token)return;
+   const moved=b.kind==='pack'?world.toggleLamp(id):world.shareCake(id);
    if(moved){event(b.kind==='pack'?'调整装灯':'调整分点心',{target:id,count:b.kind==='pack'?world.packed.size:[...world.plateCounts]});}
-   if(b.kind==='pack'&&moved){const n=world.packed.size;await respond(moved==='remove'?'pack-remove':'count-'+n,mine);}
+   if(moved){if(b.kind==='pack')quickFeedback('车上'+world.packed.size+'盏','chē shàng '+world.packed.size+' zhǎn');else quickFeedback(world.plateCounts.join(' · '),'liǎng pán');}
    if(mine===token){phase='task';locked=false;}return;
   }
   const enough=b.kind==='pack'?world.packed.size===b.goal:world.plateCounts.every(n=>n===2);
@@ -82,21 +84,20 @@ async function pick(id){if(phase!=='task'||paused||locked||!task)return;locked=t
  event(correct?'操作':'需再试',{target:id,step});
  if(!correct){
   if(b.kind==='bridge'){const n=Number(id.split('-')[1]);await world.fillBridge(n);if(mine!==token)return;await respond(n<b.goal?'retry-bridge-less':'retry-bridge-more',mine);if(mine!==token)return;world.setup(b);}
-  else {world.hint();await play(b.kind==='mail'?'hint-mail':b.kind==='clue'?'clue-'+step:b.kind==='seals'?'find-'+findWords.indexOf(b.goal[step]):'hint-pronoun');}
+  else {world.hint();locked=false;play(b.kind==='mail'?'hint-mail':b.kind==='clue'?'clue-'+step:b.kind==='seals'?'word-'+readWords.indexOf(b.goal[step]):'hint-pronoun',{short:true});return;}
   if(mine===token){phase='task';locked=false;}return;
  }
  if(countedTask()){
-  step++;const n=b.kind==='add'?b.goal:step;await world.collect(id,n,b.goal);if(mine!==token)return;const goal=b.kind==='add'?1:b.goal;
-  const speech=b.kind==='return'?'return-'+step:b.kind==='add'?'good-add'+n:step===goal?'good-load':'count-'+n;
-  await respond(speech,mine);if(mine!==token)return;
-  if(step<goal){phase='task';locked=false;return;}world.tidyLamps();
+  step++;const n=b.kind==='add'?b.goal:step,motion=world.collect(id,n,b.goal),goal=b.kind==='add'?1:b.goal;quickFeedback('已回位'+step+'/'+goal,'yǐ huí wèi');
+  if(step<goal){locked=false;return;}
+  await motion;if(mine!==token)return;world.tidyLamps();await respond(b.kind==='return'?'return-'+step:b.kind==='add'?'good-add'+n:'good-load',mine);if(mine!==token)return;
  }
  else if(b.kind==='bridge'){await world.fillBridge();if(mine!==token)return;await respond('good-bridge',mine);}
- else if(['mail','seals','clue'].includes(b.kind)){const found=b.goal[step];await world.reward(id);if(mine!==token)return;await respond(b.kind==='clue'?'good-clue-'+step:'good-word-'+readWords.indexOf(found),mine);step++;if(mine!==token)return;if(step<b.goal.length){world.setup(b,step);instructions(b);phase='task';if(['seals','clue'].includes(b.kind))await sealPrompt(mine);else locked=false;return;}}
+ else if(['mail','seals','clue'].includes(b.kind)){quickFeedback(b.kind==='seals'?'找对啦':'送到啦',b.kind==='seals'?'zhǎo duì la':'sòng dào la');await world.reward(id);if(mine!==token)return;step++;if(step<b.goal.length){world.setup(b,step);instructions(b);phase='task';locked=false;if(['seals','clue'].includes(b.kind))sealPrompt(mine);return;}world.celebrate();if(b.kind==='clue'||b.kind==='seals')await respond(b.kind==='clue'?'good-clue-2':'good-seals',mine);}
  else{await world.reward(id);if(mine!==token)return;await respond({c08:'good-friend',c09:'good-brother',c11:'good-receive',c12:'good-he'}[b.id],mine);}
- if(mine!==token)return;event('完成互动',{stage:b.stage,kindOfTask:b.kind});phase='transition';await new Promise(r=>setTimeout(r,400));if(mine===token)next();
+ if(mine!==token)return;event('完成互动',{stage:b.stage,kindOfTask:b.kind});phase='transition';await waitActive(160,mine);if(mine===token)next();
 }
-async function help(){if(phase!=='task'||paused||locked)return;const mine=token;locked=true;event('使用提示');world.hint();let id=['pack','supply','hidden','share','boxes','clue'].includes(task.kind)?'hint-'+task.kind:task.kind==='bridge'?'hint-bridge':task.kind==='mail'?'hint-mail':task.kind==='seals'?'find-'+findWords.indexOf(task.goal[step]):['pronoun','receive'].includes(task.kind)?'hint-pronoun':task.kind==='return'?'hint-return':task.kind==='add'?'hint-add':'hint-load';await play(id);if(mine===token)locked=false;}
+function help(){if(phase!=='task'||paused||locked)return;event('使用提示');world.hint();let id=['pack','supply','hidden','share','boxes','clue'].includes(task.kind)?'hint-'+task.kind:task.kind==='bridge'?'hint-bridge':task.kind==='mail'?'hint-mail':task.kind==='seals'?'find-'+findWords.indexOf(task.goal[step]):['pronoun','receive'].includes(task.kind)?'hint-pronoun':task.kind==='return'?'hint-return':task.kind==='add'?'hint-add':'hint-load';play(id);}
 function pause(){if(!ep||phase==='home'||phase==='loading'||paused)return;paused=true;world.paused=true;audio.pause();$('rest').showModal();}
 function resume(){paused=false;world.paused=false;$('rest').close();if(pendingAdvance){next();return;}if(cue&&audio.currentTime<audio.duration-.08){audio.play().catch(()=>{$('audio-retry').hidden=false;});}else if(phase==='talk'){next();}}
 function home(){++token;loadController?.abort();loadController=null;stopAudio();hideFeedback();task=null;phase='home';paused=false;locked=false;if(world){world.paused=true;world.active=false;}$('home').hidden=false;$('hud').hidden=true;$('loading').hidden=true;$('pause').hidden=true;$('lesson').textContent='选择今天的故事';$('pilot-app').classList.remove('task');for(const id of ['rest','finish'])if($(id).open)$(id).close();}
@@ -126,8 +127,9 @@ function makeReport(){
 function openReport(){if(phase!=='home'&&phase!=='finish'&&!paused)pause();$('observation').value=save.note;$('oral').value=save.oral;$('report').textContent=makeReport();$('parents').showModal();}
 function saveObservation(){save.note=$('observation').value;save.oral=$('oral').value;persist();$('report').textContent=makeReport();}
 document.querySelectorAll('[data-subject]').forEach(b=>b.onclick=()=>start(b.dataset.subject));$('pause').onclick=pause;$('resume').onclick=resume;$('back').onclick=home;$('loading-home').onclick=home;$('retry-load').onclick=()=>start(loadingSubject);$('finish-home').onclick=home;$('finish-bonus').onclick=()=>start('math_bonus');$('parent').onclick=openReport;$('finish-report').onclick=openReport;$('close-report').onclick=()=>{$('parents').close();};$('help').onclick=help;
-$('listen').onclick=async()=>{if(paused||!ep)return;if(['talk','feedback'].includes(phase)&&cue){audio.currentTime=0;audio.play().catch(()=>{$('audio-retry').hidden=false;});return;}if(locked)return;const mine=token;locked=true;if(task)event('重听要求');await play(task?.kind==='clue'?'clue-'+step:task?.kind==='seals'?'find-'+findWords.indexOf(task.goal[step]):task?.id||ep.beats[index].id);if(mine===token)locked=false;};
+$('listen').onclick=()=>{if(paused||!ep)return;if(['talk','feedback'].includes(phase)&&cue){audio.currentTime=cueStart;audio.play().catch(()=>{$('audio-retry').hidden=false;});return;}if(locked)return;if(task)event('重听要求');play(task?.kind==='clue'?'clue-'+step:task?.kind==='seals'?'word-'+readWords.indexOf(task.goal[step]):task?.id||ep.beats[index].id,{short:true});};
 $('observation').onchange=saveObservation;$('oral').onchange=saveObservation;$('download').onclick=()=>{saveObservation();const blob=new Blob([makeReport()],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='珞伊的故事手记.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);$('report-status').textContent='报告已生成，可由家长发给老师或上传到对话。';};$('copy').onclick=async()=>{saveObservation();try{await navigator.clipboard.writeText(makeReport());$('report-status').textContent='已复制。';}catch{$('report-status').textContent='此浏览器未允许复制，请点“保存报告”。';}};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&['talk','task','feedback','transition'].includes(phase))pause();});$('rest').addEventListener('cancel',e=>{e.preventDefault();resume();});
+window.pilotFlowInspect=()=>({runtime:SPEECH_VERSION,cueStart,lastVoiceRole,cast:world&&[...world.actors].map(([key,a])=>({key,name:PEOPLE[key].name,visible:a.g.visible})),progress:$('progress').textContent});
 window.pilotInspect=()=>({version:PILOT_VERSION,subject:ep?.id,index,phase,paused,locked,step,task:task&&{id:task.id,kind:task.kind,goal:task.goal},packed:world?.packed&&[...world.packed],plates:world?.plateCounts,audio:{id:cue?.file,who:cue?.who,voice:cue?.voice,text:cue?.text,intro:cue?.introDuration,time:audio.currentTime,duration:audio.duration,paused:audio.paused},feedback:{visible:!$('feedback').hidden,text:$('feedback-text').textContent,count:$('feedback-number').textContent},guidance:{markers:world?.guides.filter(g=>g.g.visible).length,sockets:world?.sockets?.length},positions:world?.positions(),speaker:world?.speaker,level:world?.level,mouths:world&&Object.fromEntries([...world.actors].map(([k,a])=>[k,Math.max(0,...a.morphs.map(m=>m.morphTargetInfluences[m.morphTargetDictionary.speak]||0))])),events:ep&&save[ep.id].events,report:makeReport()});window.cinemaReady=true;
 if(navigator.serviceWorker?.controller)navigator.serviceWorker.getRegistration().then(r=>r?.update()).catch(()=>{});
