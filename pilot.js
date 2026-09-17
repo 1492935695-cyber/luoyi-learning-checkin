@@ -1,6 +1,6 @@
-import {PILOTS,PEOPLE,PILOT_VERSION,EXTRA_SPEECH} from './pilot-data.js?v=mobile1';
-import {PilotWorld} from './pilot-world.js?v=mobile1';
-import {LOAD_VERSION,MODELS,loadBytes} from './pilot-loading.js?v=mobile1';
+import {PILOTS,PEOPLE,PILOT_VERSION,EXTRA_SPEECH} from './pilot-data.js?v=mobile2';
+import {PilotWorld} from './pilot-world.js?v=mobile2';
+import {LOAD_VERSION,MODELS,loadBytes} from './pilot-loading.js?v=mobile2';
 const $=id=>document.getElementById(id),audio=$('voice'),KEY='luoyi-pilots-v1',py={天:'tiān',地:'dì',人:'rén',我:'wǒ',你:'nǐ',他:'tā'};
 const responses=Object.fromEntries(EXTRA_SPEECH.map(x=>[x.id,x])),findWords=['天','地','人','我','你','他'],readWords=['天','地','人','你','我','他'];
 const blank=()=>({version:1,...Object.fromEntries(Object.keys(PILOTS).map(k=>[k,{index:0,done:false,events:[]}])),oral:'未观察',note:''});

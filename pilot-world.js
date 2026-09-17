@@ -1,7 +1,7 @@
 import * as T from './vendor/three.module.js';
 import {GLTFLoader} from './vendor/loaders/GLTFLoader.js';
-import {PEOPLE} from './pilot-data.js?v=mobile1';
-import {LOAD_VERSION,MODELS,loadBytes,withDeadline,abortError} from './pilot-loading.js?v=mobile1';
+import {PEOPLE} from './pilot-data.js?v=mobile2';
+import {MODELS,loadModelBytes,withDeadline,abortError} from './pilot-loading.js?v=mobile2';
 import {gunzipSync} from './vendor/fflate.js';
 
 // All interactions take place in the story world. A target represents one complete action.
@@ -31,7 +31,7 @@ export class PilotWorld {
   const queue=ep.characters.filter(key=>{if(this.cast.has(key)){onProgress(key,{loaded:MODELS[key].bytes,ready:true});return false;}return true;});
   const worker=async()=>{while(queue.length){
    if(signal?.aborted)throw abortError();const key=queue.shift(),spec=MODELS[key];
-   const packed=await loadBytes('assets/pilot/mobile/'+spec.file+'?v='+LOAD_VERSION,{signal,onProgress:p=>onProgress(key,p)});
+   const packed=await loadModelBytes(key,{signal,onProgress:p=>onProgress(key,p)});
    if(signal?.aborted)throw abortError();onProgress(key,{loaded:spec.bytes,decoding:true});
    // Some proxies decode .gz themselves. Accept either GLB or gzip bytes.
    let bytes=new Uint8Array(packed);if(bytes[0]===31&&bytes[1]===139)bytes=gunzipSync(bytes);

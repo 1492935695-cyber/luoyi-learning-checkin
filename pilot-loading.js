@@ -1,5 +1,5 @@
 // Bounded, cancellable first-load requests for Safari and embedded browsers.
-export const LOAD_VERSION='mobile1';
+export const LOAD_VERSION='mobile2';
 export const MODELS={
  li:{file:'li.glb.gz',bytes:3264427},wang:{file:'wang.glb.gz',bytes:1834292},
  friend:{file:'friend.glb.gz',bytes:3242503},brother:{file:'brother.glb.gz',bytes:3239556}
@@ -10,14 +10,14 @@ export async function loadBytes(url,{signal,onProgress=()=>{},idleMs=12000,total
  for(let attempt=1;attempt<=attempts;attempt++){
   if(signal?.aborted)throw abortError();
   try{return await new Promise((resolve,reject)=>{
-   const xhr=new XMLHttpRequest();let idle,settled=false;
+   const xhr=new XMLHttpRequest();let idle,settled=false,lastLoaded=0;
    const finish=(err,value)=>{if(settled)return;settled=true;clearTimeout(idle);signal?.removeEventListener('abort',cancel);err?reject(err):resolve(value);};
    const cancel=()=>{finish(abortError());xhr.abort();};
    const stalled=()=>{finish(new Error('Resource transfer stopped'));xhr.abort();};
    const arm=()=>{clearTimeout(idle);idle=setTimeout(stalled,idleMs);};
    signal?.addEventListener('abort',cancel,{once:true});
    xhr.open('GET',url);xhr.responseType='arraybuffer';xhr.timeout=totalMs;
-   xhr.onprogress=e=>{arm();onProgress({loaded:e.loaded,total:e.lengthComputable?e.total:0,attempt});};
+   xhr.onprogress=e=>{if(e.loaded>lastLoaded){lastLoaded=e.loaded;arm();}onProgress({loaded:e.loaded,total:e.lengthComputable?e.total:0,attempt});};
    xhr.onload=()=>{if(xhr.status>=200&&xhr.status<300&&xhr.response?.byteLength){onProgress({loaded:xhr.response.byteLength,total:xhr.response.byteLength,attempt});finish(null,xhr.response);}else finish(new Error('Resource HTTP '+xhr.status));};
    xhr.onerror=()=>finish(new Error('Resource network error'));
    xhr.ontimeout=()=>finish(new Error('Resource deadline exceeded'));
@@ -25,6 +25,21 @@ export async function loadBytes(url,{signal,onProgress=()=>{},idleMs=12000,total
    onProgress({loaded:0,total:0,attempt});arm();xhr.send();
   });}catch(e){if(signal?.aborted||e.name==='AbortError'||attempt===attempts)throw e;}
  }
+}
+
+// Small immutable pieces avoid restarting a multi-megabyte character transfer.
+const pieces=new Map();
+export async function loadModelBytes(key,{signal,onProgress=()=>{}}={}){
+ const spec=MODELS[key],size=262144,count=Math.ceil(spec.bytes/size),parts=new Array(count),received=new Array(count).fill(0);let next=0;
+ const progress=attempt=>onProgress({loaded:received.reduce((n,v)=>n+v,0),total:spec.bytes,attempt});
+ const worker=async()=>{while(next<count){
+  if(signal?.aborted)throw abortError();const part=next++,url='assets/pilot/mobile/'+key+'.'+String(part).padStart(2,'0')+'.bin?v='+LOAD_VERSION,expected=Math.min(size,spec.bytes-part*size);
+  let bytes=pieces.get(url);
+  if(!bytes){bytes=await loadBytes(url,{signal,onProgress:p=>{received[part]=Math.min(p.loaded,expected);progress(p.attempt);}});if(bytes.byteLength!==expected)throw Error('Incomplete character piece');pieces.set(url,bytes);}
+  parts[part]=new Uint8Array(bytes);received[part]=expected;progress(1);
+ }};
+ await Promise.all([worker(),worker()]);if(signal?.aborted)throw abortError();
+ const packed=new Uint8Array(spec.bytes);parts.forEach((b,i)=>packed.set(b,i*size));return packed.buffer;
 }
 
 export function withDeadline(promise,signal,ms=20000){
