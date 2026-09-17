@@ -1,0 +1,19 @@
+珞伊的蜻蜓剧场 · 两科首集（2026-09-17）
+
+Rain Rig © Blender Foundation | cloud.blender.org
+https://studio.blender.org/characters/rain/v1/
+Vincent character © Blender Foundation / Blender Studio
+https://studio.blender.org/characters/vincent/v1/
+Spring Rig © Blender Foundation / Blender Studio
+https://studio.blender.org/characters/spring/v1/
+These character bases are licensed under Creative Commons Attribution 4.0:
+https://creativecommons.org/licenses/by/4.0/
+Adaptations: browser mesh conversion, original fictional-role assignment, materials,
+clothing colors, facial and gesture morphs. No resemblance to real teachers is claimed.
+
+Original environment model attribution remains in ../cinema/ATTRIBUTION.txt.
+Original class emblem supplied and authorized by the parent, displayed proportionally.
+Story, interaction design and UI were created for this family project.
+Stock synthetic speech generated with Microsoft online speech synthesis with the
+parent's explicit permission. This is not voice cloning of children or teachers.
+No textbook page scans, private teacher messages or real child performance are bundled.

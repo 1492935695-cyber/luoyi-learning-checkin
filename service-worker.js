@@ -60,6 +60,14 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || !event.request.url.startsWith(self.registration.scope)) return;
+  // The teacher's existing cinema URL always checks its current entry document.
+  if (new URL(event.request.url).pathname.endsWith('/cinema.html')) {
+    event.respondWith(fetch(event.request, {cache:'no-cache'}).then(async response => {
+      if(response.ok){const cache=await caches.open(CACHE_NAME);await cache.put(event.request,response.clone());}
+      return response;
+    }).catch(async()=>await caches.match(event.request) || new Response('请联网后重新打开故事。',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}})));
+    return;
+  }
   // Video players on iOS request byte ranges. Cache.put rejects 206 responses.
   if (event.request.headers.has("range")) {
     event.respondWith(fetch(event.request));
